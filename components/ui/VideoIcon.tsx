@@ -1,8 +1,7 @@
 import React from "react";
 
-type Props = {};
 
-const VideoIcon = (props: Props) => {
+const VideoIcon = () => {
   return (
     <svg
       width="20"

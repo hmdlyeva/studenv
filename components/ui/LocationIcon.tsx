@@ -1,8 +1,7 @@
 import React from "react";
 
-type Props = {};
 
-const LocationIcon = (props: Props) => {
+const LocationIcon = () => {
   return (
     <svg
       version="1.0"

@@ -1,8 +1,7 @@
 import React from "react";
 
-type Props = {};
 
-const Camera = (props: Props) => {
+const Camera = () => {
   return (
     <svg
       fill="#707070"

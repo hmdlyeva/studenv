@@ -1,8 +1,7 @@
 import React from 'react'
 
-type Props = {}
 
-const CommentIcon = (props: Props) => {
+const CommentIcon = () => {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M7 7H17" stroke="#707070" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

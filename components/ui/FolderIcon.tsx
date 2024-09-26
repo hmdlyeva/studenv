@@ -1,8 +1,7 @@
 import React from "react";
 
-type Props = {};
 
-const FolderIcon = (props: Props) => {
+const FolderIcon = () => {
   return (
     <svg
       width="20"

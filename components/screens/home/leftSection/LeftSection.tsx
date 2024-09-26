@@ -1,10 +1,9 @@
 import React from "react";
 
-type Props = {};
 const channelData = [1, 2, 3, 4];
 const eventData = [1, 2, 3];
 
-const LeftSection = (props: Props) => {
+const LeftSection = () => {
   return (
     <div className="left w-1/4 flex flex-col gap-6">
       <div className="card bg-white border rounded-2xl">

@@ -11,11 +11,10 @@ import ThreeDot from "@/components/ui/ThreeDot";
 import VideoIcon from "@/components/ui/VideoIcon";
 import React, { useEffect, useRef, useState } from "react";
 
-type Props = {};
 
 const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-const MiddSection = (props: Props) => {
+const MiddSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [isActive, setIsActive] = useState(false);

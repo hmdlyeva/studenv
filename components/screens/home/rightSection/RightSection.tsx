@@ -1,12 +1,11 @@
 import ThreeDot from "@/components/ui/ThreeDot";
 import React from "react";
 
-type Props = {};
 
 const hastagData = [1, 2, 3];
 const otherEventData = [1, 2, 3];
 
-const RightSection = (props: Props) => {
+const RightSection = () => {
   return (
     <div className="right w-1/4 flex flex-col gap-6">
       <div className="card bg-white border rounded-2xl">

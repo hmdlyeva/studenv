@@ -1,8 +1,7 @@
 import React from "react";
 
-type Props = {};
 
-const ShareIcon = (props: Props) => {
+const ShareIcon = () => {
   return (
     <svg
       width="20"
