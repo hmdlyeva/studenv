@@ -9,13 +9,27 @@ import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
 import VideoIcon from "@/components/ui/VideoIcon";
+import { getUserData } from "@/redux/slice/auth/auth";
+import { getDisData } from "@/redux/slice/discussion/discussion";
+import { AppDispatch, RootState } from "@/redux/store/store";
 import React, { useEffect, useRef, useState } from "react";
-
+import { useSelector, useDispatch } from "react-redux";
 
 const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-
 const MiddSection = () => {
+  const user = useSelector((state: RootState) => state.users.users);
+  const dis = useSelector((state: RootState) => state.diss.diss);
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUserData());
+    dispatch(getDisData());
+  }, []);
+
+  console.log(user)
+  console.log(dis)
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [isActive, setIsActive] = useState(false);
@@ -26,9 +40,7 @@ const MiddSection = () => {
   const [showMap, setShowMap] = useState(false);
   const [showYtInp, setShowYtInp] = useState(false);
 
-
   const handleCameraAccess = async () => {
-
     if (isActive) {
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
@@ -93,14 +105,14 @@ const MiddSection = () => {
   };
 
   const handleVideoClick = () => {
-    setShowYtInp(!showYtInp)
+    setShowYtInp(!showYtInp);
     if (videoInputRef.current) {
       videoInputRef.current.click();
     }
   };
 
   const handlePdfClick = () => {
-    setPdfFileName("")
+    setPdfFileName("");
     if (pdfInputRef.current) {
       pdfInputRef.current.click();
     }
@@ -213,30 +225,31 @@ const MiddSection = () => {
             </div>
           )}
 
-          { showYtInp && <div className="youtube-url-input mt-4">
-            <input
-              type="text"
-              placeholder="Enter YouTube video URL"
-              value={youtubeUrl}
-              onChange={handleYoutubeUrlChange}
-              className="border-2 p-2 ps-4 rounded-lg w-full bg-[#f9f9f9]"
-            />
-            {youtubeUrl && (
-              <div className="youtube-video-preview mt-2">
-                <iframe
-                  width="100%"
-                  height="300"
-                  src={`https://www.youtube.com/embed/${new URL(
-                    youtubeUrl
-                  ).searchParams.get("v")}`}
-                  title="YouTube video"
-                  frameBorder="0"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            )}
-          </div>
-}
+          {showYtInp && (
+            <div className="youtube-url-input mt-4">
+              <input
+                type="text"
+                placeholder="Enter YouTube video URL"
+                value={youtubeUrl}
+                onChange={handleYoutubeUrlChange}
+                className="border-2 p-2 ps-4 rounded-lg w-full bg-[#f9f9f9]"
+              />
+              {youtubeUrl && (
+                <div className="youtube-video-preview mt-2">
+                  <iframe
+                    width="100%"
+                    height="300"
+                    src={`https://www.youtube.com/embed/${new URL(
+                      youtubeUrl
+                    ).searchParams.get("v")}`}
+                    title="YouTube video"
+                    frameBorder="0"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              )}
+            </div>
+          )}
 
           <input
             ref={pdfInputRef}
