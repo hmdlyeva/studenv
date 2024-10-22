@@ -14,6 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+
 const MiddSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
@@ -25,7 +26,9 @@ const MiddSection = () => {
   const [showMap, setShowMap] = useState(false);
   const [showYtInp, setShowYtInp] = useState(false);
 
+
   const handleCameraAccess = async () => {
+
     if (isActive) {
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
@@ -44,7 +47,7 @@ const MiddSection = () => {
           videoRef.current.srcObject = stream;
         }
       } catch (error) {
-        console.error("Kameraya erişilemedi:", error);
+        console.error("Never gonna give you up!", error);
       }
     }
   };
