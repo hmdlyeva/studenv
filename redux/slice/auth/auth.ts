@@ -9,14 +9,13 @@ export const getUserData = createAsyncThunk("users/getUserData", async () => {
   return response.data;
 });
 
-
-// export const getLocDataById = createAsyncThunk(
-//   "locations/getLocDataById",
-//   async (id: number) => {
-//     const response = await axios.get(`${baseURL}/${id}`);
-//     return response.data;
-//   }
-// );
+export const getUserDataById = createAsyncThunk(
+  "users/getUserDataById",
+  async (user_id: string) => {
+    const response = await axios.get(`${baseURL}${user_id}`);
+    return response.data;
+  }
+);
 
 // export const delLocData = createAsyncThunk(
 //   "locations/delLocData",
@@ -43,36 +42,36 @@ export const getUserData = createAsyncThunk("users/getUserData", async () => {
 // );
 
 export interface User {
-    name: string,
-    email: string,
-      role: string,
-      user_id: string,
-      date_of_created: string,
-      is_verified: boolean,
-      otp_code: string,
-      otp_expiry: string
-  }
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  user_id: string;
+  date_of_created: string;
+  is_verified: boolean;
+  otp_code: string;
+  otp_expiry: string;
+}
 
 export interface userState {
-    user: User;
-    users: User[];
-    loading: boolean;
+  user: User;
+  users: User[];
+  loading: boolean;
 }
 const initialState: userState = {
-    user:{
-
-        name: "",
-        email: "",
-        role: "",
-        user_id: "",
-        date_of_created: "",
-        is_verified: false,
-        otp_code: "",
-        otp_expiry: ""
-
-    },
-    users:[],
-    loading:false
+  user: {
+    id: "",
+    name: "",
+    email: "",
+    role: "",
+    user_id: "",
+    date_of_created: "",
+    is_verified: false,
+    otp_code: "",
+    otp_expiry: "",
+  },
+  users: [],
+  loading: false,
 };
 
 export const userSlice = createSlice({
@@ -83,7 +82,7 @@ export const userSlice = createSlice({
     //   state.name += action.payload;
     // },
   },
-  
+
   extraReducers: (builder) => {
     builder
       .addCase(getUserData.pending, (state) => {
@@ -99,7 +98,22 @@ export const userSlice = createSlice({
       .addCase(getUserData.rejected, (state) => {
         state.loading = false;
       });
-    }
+
+      builder
+      .addCase(getUserDataById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(
+        getUserDataById.fulfilled,
+        (state, action: PayloadAction<User>) => {
+          state.user = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(getUserDataById.rejected, (state) => {
+        state.loading = false;
+      });
+  },
 });
 
 export const {} = userSlice.actions;

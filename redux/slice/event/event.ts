@@ -2,9 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const baseURL = "http://127.0.0.1:8000/discussions/";
+const baseURL = "http://127.0.0.1:8000/events/";
 
-export const getDisData = createAsyncThunk("dis/getDisData", async () => {
+export const getEventData = createAsyncThunk("event/getEventData", async () => {
   const response = await axios.get(baseURL);
   return response.data;
 });
@@ -33,49 +33,45 @@ export const getDisData = createAsyncThunk("dis/getDisData", async () => {
 //   }
 // );
 
-export const postDisData = createAsyncThunk(
-  "dis/postDisData",
-  async (newp: Partial<Dis>) => {
+export const postEventData = createAsyncThunk(
+  "event/postEventData",
+  async (newp: Partial<Event>) => {
     const response = await axios.post(baseURL, newp);
     return response.data;
   }
 );
 
-export interface Dis {
-  topic: string;
-  content: string;
-  tag: string;
-  discussion_score: number;
-  question: boolean;
-  answered: boolean;
-  discussion_id: string;
+export interface Event {
+  title: string;
+  description: string;
+  type: string;
+  location: string;
+  event_id: string;
   user_id: string;
   date_of_created: string;
 }
 
 export interface disState {
-  dis: Dis;
-  diss: Dis[];
+  event: Event;
+  events: Event[];
   loading: boolean;
 }
 const initialState: disState = {
-  dis: {
-    topic: "",
-    content: "",
-    tag: "",
-    discussion_score: 0,
-    question: false,
-    answered: false,
-    discussion_id: "",
+  event: {
+    title: "",
+    description: "",
+    type: "",
+    location: "",
+    event_id: "",
     user_id: "",
     date_of_created: "",
   },
-  diss: [],
+  events: [],
   loading: false,
 };
 
-export const disSlice = createSlice({
-  name: "dis",
+export const eventSlice = createSlice({
+  name: "event",
   initialState,
   reducers: {
     // incrementByAmount: (state, action: PayloadAction<string>) => {
@@ -85,37 +81,37 @@ export const disSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(getDisData.pending, (state) => {
+      .addCase(getEventData.pending, (state) => {
         state.loading = true;
       })
       .addCase(
-        getDisData.fulfilled,
-        (state, action: PayloadAction<Dis[]>) => {
-          state.diss = action.payload;
+        getEventData.fulfilled,
+        (state, action: PayloadAction<Event[]>) => {
+          state.events = action.payload;
           state.loading = false;
         }
       )
-      .addCase(getDisData.rejected, (state) => {
+      .addCase(getEventData.rejected, (state) => {
         state.loading = false;
       });
 
-      builder
-      .addCase(postDisData.pending, (state) => {
+    builder
+      .addCase(postEventData.pending, (state) => {
         state.loading = true;
       })
       .addCase(
-        postDisData.fulfilled,
-        (state, action: PayloadAction<Dis>) => {
-          state.diss.push(action.payload);
+        postEventData.fulfilled,
+        (state, action: PayloadAction<Event>) => {
+          state.events.push(action.payload);
           state.loading = false;
         }
       )
-      .addCase(postDisData.rejected, (state) => {
+      .addCase(postEventData.rejected, (state) => {
         state.loading = false;
       });
   },
 });
 
-export const {} = disSlice.actions;
+export const {} = eventSlice.actions;
 
-export default disSlice.reducer;
+export default eventSlice.reducer;

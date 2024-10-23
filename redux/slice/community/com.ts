@@ -2,9 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const baseURL = "http://127.0.0.1:8000/discussions/";
+const baseURL = "http://127.0.0.1:8000/communities/";
 
-export const getDisData = createAsyncThunk("dis/getDisData", async () => {
+export const getComData = createAsyncThunk("com/getComData", async () => {
   const response = await axios.get(baseURL);
   return response.data;
 });
@@ -33,15 +33,15 @@ export const getDisData = createAsyncThunk("dis/getDisData", async () => {
 //   }
 // );
 
-export const postDisData = createAsyncThunk(
-  "dis/postDisData",
-  async (newp: Partial<Dis>) => {
+export const postComData = createAsyncThunk(
+  "com/postComData",
+  async (newp: Partial<Com>) => {
     const response = await axios.post(baseURL, newp);
     return response.data;
   }
 );
 
-export interface Dis {
+export interface Com {
   topic: string;
   content: string;
   tag: string;
@@ -53,13 +53,13 @@ export interface Dis {
   date_of_created: string;
 }
 
-export interface disState {
-  dis: Dis;
-  diss: Dis[];
+export interface comState {
+  com: Com;
+  coms: Com[];
   loading: boolean;
 }
-const initialState: disState = {
-  dis: {
+const initialState: comState = {
+  com: {
     topic: "",
     content: "",
     tag: "",
@@ -70,12 +70,12 @@ const initialState: disState = {
     user_id: "",
     date_of_created: "",
   },
-  diss: [],
+  coms: [],
   loading: false,
 };
 
-export const disSlice = createSlice({
-  name: "dis",
+export const comSlice = createSlice({
+  name: "com",
   initialState,
   reducers: {
     // incrementByAmount: (state, action: PayloadAction<string>) => {
@@ -85,37 +85,37 @@ export const disSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(getDisData.pending, (state) => {
+      .addCase(getComData.pending, (state) => {
         state.loading = true;
       })
       .addCase(
-        getDisData.fulfilled,
-        (state, action: PayloadAction<Dis[]>) => {
-          state.diss = action.payload;
+        getComData.fulfilled,
+        (state, action: PayloadAction<Com[]>) => {
+          state.coms = action.payload;
           state.loading = false;
         }
       )
-      .addCase(getDisData.rejected, (state) => {
+      .addCase(getComData.rejected, (state) => {
         state.loading = false;
       });
 
       builder
-      .addCase(postDisData.pending, (state) => {
+      .addCase(postComData.pending, (state) => {
         state.loading = true;
       })
       .addCase(
-        postDisData.fulfilled,
-        (state, action: PayloadAction<Dis>) => {
-          state.diss.push(action.payload);
+        postComData.fulfilled,
+        (state, action: PayloadAction<Com>) => {
+          state.coms.push(action.payload);
           state.loading = false;
         }
       )
-      .addCase(postDisData.rejected, (state) => {
+      .addCase(postComData.rejected, (state) => {
         state.loading = false;
       });
   },
 });
 
-export const {} = disSlice.actions;
+export const {} = comSlice.actions;
 
-export default disSlice.reducer;
+export default comSlice.reducer;

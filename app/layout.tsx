@@ -1,8 +1,7 @@
 "use client"
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/layout/navbar/Navbar";
 import { store } from '../redux/store/store'
 import { Provider } from 'react-redux'
 const geistSans = localFont({
@@ -22,19 +21,18 @@ const geistMono = localFont({
 // };
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
          <Provider store={store}>
-        <Navbar/>
+          
         {children}
-
          </Provider>
       </body>
     </html>

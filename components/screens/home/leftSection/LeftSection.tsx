@@ -24,7 +24,7 @@ const LeftSection = () => {
             </div>
           ))}
         </div>
-        <button className="rounded-3xl border-2 border-blue-500 text-blue-500 p-1 m-4 w-[90%] ">
+        <button className="rounded-3xl border-2 border-blue-500 hover:bg-blue-500 hover:text-white text-blue-500 p-1 m-4 w-[90%] ">
           See All
         </button>
       </div>

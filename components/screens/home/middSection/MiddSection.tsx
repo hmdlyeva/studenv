@@ -10,7 +10,7 @@ import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
 import VideoIcon from "@/components/ui/VideoIcon";
 import { getUserData } from "@/redux/slice/auth/auth";
-import { getDisData } from "@/redux/slice/discussion/discussion";
+import { getDisData, postDisData } from "@/redux/slice/discussion/discussion";
 import { AppDispatch, RootState } from "@/redux/store/store";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -27,8 +27,8 @@ const MiddSection = () => {
     dispatch(getDisData());
   }, []);
 
-  console.log(user)
-  console.log(dis)
+  // console.log(user)
+  console.log(dis);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
@@ -39,6 +39,19 @@ const MiddSection = () => {
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [showYtInp, setShowYtInp] = useState(false);
+  const [content, setContent] = useState("");
+  const formatDate = (dateString: string) => {
+    const options: any = {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", options)
+      .format(date)
+      .replace(",", "");
+  };
 
   const handleCameraAccess = async () => {
     if (isActive) {
@@ -128,6 +141,26 @@ const MiddSection = () => {
     setShowMap((prevState) => !prevState);
   };
 
+  const handleSubmit = async () => {
+    if (content.trim() === "") return; 
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}"); 
+    const userId = userInfo.user_id;
+
+    const newDiscussion = {
+      topic: "Default Topic", 
+      content: content,
+      tag: "Default Tag", 
+      discussion_score: 0,
+      question: true,
+      answered: true,
+      user_id: userId,
+    };
+
+    await dispatch(postDisData(newDiscussion));
+    setContent(""); 
+  };
+
   return (
     <div className="middle w-1/2 flex flex-col gap-6 h-screen pb-8 overflow-y-auto scrollbar-none">
       <div className="card p-4 bg-white border rounded-2xl">
@@ -137,9 +170,12 @@ const MiddSection = () => {
             type="text"
             name=""
             id=""
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             placeholder="Share or ask something to everyone!"
             className="border-2 p-2 ps-4 rounded-lg w-full bg-[#f9f9f9]"
           />
+          <button  onClick={handleSubmit} className="border-2 p-2 rounded-lg bg-[#f9f9f9]">add</button>
         </div>
         <div className="icons pt-2 pb-2">
           <ul className="flex gap-14 lg:gap-10 md:gap-6 sm:gap-3 p-3 pb-0 justify-center">
@@ -280,57 +316,59 @@ const MiddSection = () => {
         </div>
       </div>
 
-      {postData.map((post, i) => (
-        <div
-          key={i}
-          className="post bg-white border rounded-2xl p-4 flex flex-col gap-6"
-        >
-          <div className="post_hero flex justify-between">
-            <div className="left flex gap-4">
-              <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
-              <div className="detail flex flex-col justify-between">
-                <h1 className="text-xl font-medium">
-                  Dribbble Shots Community
-                </h1>
-                <div className="user flex gap-2 items-center">
-                  <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                  <p className="text-blue-600 cursor-pointer">Hamida</p>
-                  <p className="text-sm text-gray-400">| Just Now</p>
+      {dis &&
+        dis.map((post, i) => {
+          const userContent = user.find((us) => us.user_id === post.user_id);
+
+          return (
+            <div
+              key={i}
+              className="post bg-white border rounded-2xl p-4 flex flex-col gap-6"
+            >
+              <div className="post_hero flex justify-between">
+                <div className="left flex gap-4">
+                  <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
+                  <div className="detail flex flex-col justify-between">
+                    <h1 className="text-xl font-medium">{post.topic}</h1>
+                    <div className="user flex gap-2 items-center">
+                      <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
+                      <p className="text-blue-600 cursor-pointer">
+                        {userContent ? userContent.name : "Unknown User"}
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        | Just {formatDate(post.date_of_created)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="rotate-90 pr-10 cursor-pointer">
+                  <ThreeDot />
                 </div>
               </div>
+              <h1>{post.content}</h1>
+              <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
+                <li>#{post.tag}</li>
+              </ul>
+              <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
+              <div className="post_footer flex justify-between text-gray-500">
+                <ul className="flex gap-8">
+                  <li className="flex items-center gap-2 cursor-pointer">
+                    <LikeIcon /> Like
+                  </li>
+                  <li className="flex items-center gap-2 cursor-pointer">
+                    <CommentIcon /> Comment
+                  </li>
+                  <li className="flex items-center gap-2 cursor-pointer">
+                    <SaveIcon /> Save
+                  </li>
+                </ul>
+                <p className="flex items-center gap-2 cursor-pointer">
+                  <ShareIcon /> Share
+                </p>
+              </div>
             </div>
-            <div className="rotate-90 pr-10 cursor-pointer">
-              <ThreeDot />
-            </div>
-          </div>
-          <h1>
-            Hi gaes, today, i am bringing you a UI design for Logistic Website.
-          </h1>
-          <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
-            <li>#Website</li>
-            <li>#UIUX</li>
-            <li>#Design</li>
-            <li>#LandingPage</li>
-          </ul>
-          <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
-          <div className="post_footer flex justify-between text-gray-500">
-            <ul className="flex gap-8">
-              <li className="flex items-center gap-2 cursor-pointer">
-                <LikeIcon /> Like
-              </li>
-              <li className="flex items-center gap-2 cursor-pointer">
-                <CommentIcon /> Comment
-              </li>
-              <li className="flex items-center gap-2 cursor-pointer">
-                <SaveIcon /> Save
-              </li>
-            </ul>
-            <p className="flex items-center gap-2 cursor-pointer">
-              <ShareIcon /> Share
-            </p>
-          </div>
-        </div>
-      ))}
+          );
+        })}
     </div>
   );
 };
