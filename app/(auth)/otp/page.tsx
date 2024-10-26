@@ -4,11 +4,8 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { verifyOtp } from '@/api/auth';
 
-type Props = {
-   
-};
 
-const Otp = (props: Props) => {
+const Otp = () => {
     const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
     const [otpInputFilled, setOtpInputFilled] = useState(false);
     const router = useRouter();
@@ -87,7 +84,9 @@ const Otp = (props: Props) => {
                         {otpCode.map((digit, index) => (
                             <input
                                 key={index}
-                                ref={(el:any) => inputRefs.current[index] = el} 
+                                ref={(el: HTMLInputElement | null): void => {
+                                    inputRefs.current[index] = el;
+                                  }}
                                 id={`otp-input-${index}`}
                                 type="text"
                                 value={digit}

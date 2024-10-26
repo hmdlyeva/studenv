@@ -3,8 +3,10 @@ import Camera from "@/components/ui/Camera";
 import CommentIcon from "@/components/ui/CommentIcon";
 import FolderIcon from "@/components/ui/FolderIcon";
 import ImageIcon from "@/components/ui/ImageIcon";
+import LikedIcon from "@/components/ui/LikedIcon";
 import LikeIcon from "@/components/ui/LikeIcon";
 import LocationIcon from "@/components/ui/LocationIcon";
+import SavedIcon from "@/components/ui/SavedIcon";
 import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
@@ -15,7 +17,7 @@ import { AppDispatch, RootState } from "@/redux/store/store";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const MiddSection = () => {
   const user = useSelector((state: RootState) => state.users.users);
@@ -40,8 +42,12 @@ const MiddSection = () => {
   const [showMap, setShowMap] = useState(false);
   const [showYtInp, setShowYtInp] = useState(false);
   const [content, setContent] = useState("");
+
+  const [likePost, setLikePost] = useState(false);
+  const [savePost, setSavePost] = useState(false);
+
   const formatDate = (dateString: string) => {
-    const options: any = {
+    const options: Intl.DateTimeFormatOptions = {
       day: "numeric",
       month: "short",
       hour: "2-digit",
@@ -142,15 +148,15 @@ const MiddSection = () => {
   };
 
   const handleSubmit = async () => {
-    if (content.trim() === "") return; 
+    if (content.trim() === "") return;
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}"); 
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
     const userId = userInfo.user_id;
 
     const newDiscussion = {
-      topic: "Default Topic", 
+      topic: "Default Topic",
       content: content,
-      tag: "Default Tag", 
+      tag: "Default Tag",
       discussion_score: 0,
       question: true,
       answered: true,
@@ -158,7 +164,7 @@ const MiddSection = () => {
     };
 
     await dispatch(postDisData(newDiscussion));
-    setContent(""); 
+    setContent("");
   };
 
   return (
@@ -175,7 +181,12 @@ const MiddSection = () => {
             placeholder="Share or ask something to everyone!"
             className="border-2 p-2 ps-4 rounded-lg w-full bg-[#f9f9f9]"
           />
-          <button  onClick={handleSubmit} className="border-2 p-2 rounded-lg bg-[#f9f9f9]">add</button>
+          <button
+            onClick={handleSubmit}
+            className="border-2 p-2 rounded-lg bg-[#f9f9f9]"
+          >
+            add
+          </button>
         </div>
         <div className="icons pt-2 pb-2">
           <ul className="flex gap-14 lg:gap-10 md:gap-6 sm:gap-3 p-3 pb-0 justify-center">
@@ -352,14 +363,22 @@ const MiddSection = () => {
               <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
               <div className="post_footer flex justify-between text-gray-500">
                 <ul className="flex gap-8">
-                  <li className="flex items-center gap-2 cursor-pointer">
-                    <LikeIcon /> Like
+                  <li
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setLikePost(!likePost)}
+                  >
+                    {likePost ? <LikedIcon /> : <LikeIcon />}
+                    Like
                   </li>
                   <li className="flex items-center gap-2 cursor-pointer">
                     <CommentIcon /> Comment
                   </li>
-                  <li className="flex items-center gap-2 cursor-pointer">
-                    <SaveIcon /> Save
+                  <li
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setSavePost(!savePost)}
+                  >
+                    {savePost ? <SavedIcon /> : <SaveIcon />}
+                    Save
                   </li>
                 </ul>
                 <p className="flex items-center gap-2 cursor-pointer">
@@ -369,6 +388,54 @@ const MiddSection = () => {
             </div>
           );
         })}
+
+      <div className="post bg-white border rounded-2xl p-4 flex flex-col gap-6">
+        <div className="post_hero flex justify-between">
+          <div className="left flex gap-4">
+            <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
+            <div className="detail flex flex-col justify-between">
+              <h1 className="text-xl font-medium">topic</h1>
+              <div className="user flex gap-2 items-center">
+                <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
+                <p className="text-blue-600 cursor-pointer">Unknown User</p>
+                <p className="text-sm text-gray-400">| Just Now</p>
+              </div>
+            </div>
+          </div>
+          <div className="rotate-90 pr-10 cursor-pointer">
+            <ThreeDot />
+          </div>
+        </div>
+        <h1>content texti</h1>
+        <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
+          <li>#tags</li>
+        </ul>
+        {/* <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div> */}
+        <div className="post_footer flex justify-between text-gray-500">
+          <ul className="flex gap-8">
+            <li
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setLikePost(!likePost)}
+            >
+              {likePost ? <LikedIcon /> : <LikeIcon />}
+              Like
+            </li>
+            <li className="flex items-center gap-2 cursor-pointer">
+              <CommentIcon /> Comment
+            </li>
+            <li
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setSavePost(!savePost)}
+            >
+              {savePost ? <SavedIcon /> : <SaveIcon />}
+              Save
+            </li>
+          </ul>
+          <p className="flex items-center gap-2 cursor-pointer">
+            <ShareIcon /> Share
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -5,9 +5,8 @@ import * as Yup from "yup";
 import { register } from "@/api/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-type Props = {};
 
-const Register = (props: Props) => {
+const Register = () => {
   const [checked, setChecked] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
@@ -96,7 +95,7 @@ const Register = (props: Props) => {
       <div className="w-2/3 flex justify-center items-center h-4/5">
       <div className="bg-white rounded-3xl w-full h-full p-5 m-auto flex gap-8">
           <div className="left h-full w-1/2 p-[3%] relative">
-            <p className="font-bold text-8xl -rotate-45 w-1 h-14">"</p>
+            <p className="font-bold text-8xl -rotate-45 w-1 h-14">&quot;</p>
             <h1 className="text-3xl font-medium pt-0 absolute right-8 top-7">Get Started Now</h1>
             <p className="font-medium py-1 absolute right-8 top-14">
               Enter your credentials to create your account

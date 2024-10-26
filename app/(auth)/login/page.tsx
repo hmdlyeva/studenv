@@ -2,14 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { login, register } from "@/api/auth";
+import { login } from "@/api/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { usePathname } from 'next/navigation';
-type Props = {};
 
-const Login = (props: Props) => {
-  const pathname = usePathname();
+const Login = () => {
   const [checked, setChecked] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
@@ -104,7 +101,7 @@ const router = useRouter()
           </div>
           
           <div className="left h-full w-1/2 p-[3%] relative">
-            <p className="font-bold text-8xl rotate-45 w-1 h-14 flex absolute right-16 top-0">"</p>
+            <p className="font-bold text-8xl rotate-45 w-1 h-14 flex absolute right-16 top-0">&quot;</p>
             <h1 className="text-3xl font-medium pt-2">Get Started Now</h1>
             <p className="font-medium py-1">
               Enter your credentials to access your account
@@ -234,7 +231,7 @@ const router = useRouter()
                 Login
               </button>
               <div className="flex gap-1">
-                <span>Don't have an account ?</span>
+                <span>Don&apos;t have an account ?</span>
                 <span className="text-blue-600 cursor-pointer hover:text-blue-800" onClick={()=> router.push("/register")}>
                   Sign up
                 </span>

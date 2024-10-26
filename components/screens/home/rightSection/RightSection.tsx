@@ -2,13 +2,13 @@
 import ThreeDot from "@/components/ui/ThreeDot";
 import { getEventData } from "@/redux/slice/event/event";
 import { AppDispatch, RootState } from "@/redux/store/store";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 const hastagData = [1, 2, 3];
-const otherEventData = [1, 2, 3];
-type Props = {
-};
+// const otherEventData = [1, 2, 3];
+// type Props = {
+// };
 
 const RightSection = () => {
   const event = useSelector((state: RootState) => state.events.events);
@@ -19,7 +19,7 @@ const RightSection = () => {
   }, []);
 
   const formatDate = (dateString: string) => {
-    const options: any = {
+    const options: Intl.DateTimeFormatOptions = {
       day: "numeric",
       month: "long",
       year: "numeric",
