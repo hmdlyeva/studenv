@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const baseURL = "http://127.0.0.1:8000/communities/";
+const baseURL = "https://studenv-2mo8x.ondigitalocean.app/communities/";
 
 export const getComData = createAsyncThunk("com/getComData", async () => {
   const response = await axios.get(baseURL);

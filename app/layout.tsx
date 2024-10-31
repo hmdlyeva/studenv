@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { store } from '../redux/store/store'
 import { Provider } from 'react-redux'
+import { useState, useEffect } from "react";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -25,10 +26,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, []);
   return (
     <html lang="en" >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${theme === "white" ? "bg-white": "bg-dark border-gray-600"}`}
       >
          <Provider store={store}>
           

@@ -16,13 +16,12 @@ import { getDisData, postDisData } from "@/redux/slice/discussion/discussion";
 import { AppDispatch, RootState } from "@/redux/store/store";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
-const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 type Props = {
-  theme:string;
-}
+  theme: string;
+};
+const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-const MiddSection = ({theme}:Props) => {
+const MiddSection = ({ theme }: Props) => {
   const user = useSelector((state: RootState) => state.users.users);
   const dis = useSelector((state: RootState) => state.diss.diss);
   const dispatch: AppDispatch = useDispatch();
@@ -171,8 +170,12 @@ const MiddSection = ({theme}:Props) => {
   };
 
   return (
-    <div className="middle md:max-w-[95%] flex flex-col gap-6 h-screen pb-8 overflow-y-auto scrollbar-none w-[95%] mx-auto">
-      <div className={`card p-4 border rounded-2xl ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
+    <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto">
+      <div
+        className={`card p-4 border rounded-2xl ${
+          theme === "white" ? "bg-white" : "bg-dark border-gray-600"
+        } ${theme === "white" ? "text-black" : "text-white"}`}
+      >
         <div className="up flex gap-4 items-center">
           <div className="img w-10 h-10 rounded-lg bg-slate-400 cursor-pointer"></div>
           <input
@@ -182,17 +185,29 @@ const MiddSection = ({theme}:Props) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share or ask something to everyone!"
-            className={`border-2 p-2 ps-4 rounded-lg w-full ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600"}`}
+            className={`border-2 p-2 ps-4 rounded-lg w-full ${
+              theme === "white"
+                ? "bg-whitesecond"
+                : "bg-secondblack border-gray-600"
+            }`}
           />
           <button
             onClick={handleSubmit}
-            className={`border-2 p-2 rounded-lg ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600 text-white"}`}
+            className={`border-2 p-2 rounded-lg ${
+              theme === "white"
+                ? "bg-whitesecond"
+                : "bg-secondblack border-gray-600 text-white"
+            }`}
           >
             add
           </button>
         </div>
         <div className="icons pt-2 pb-2">
-          <ul className={`max-w-[90%] m-auto overflow-x-auto scrollbar-none flex gap-4 lg:gap-10 md:gap-6 sm:gap-3 p-3 pb-0 justify-start ${theme === "white" ? "text-black": "text-white"}`}>
+          <ul
+            className={`max-w-[90%] m-auto overflow-x-auto scrollbar-none flex gap-4 lg:gap-10 md:gap-6 sm:gap-3 p-3 pb-0 justify-start ${
+              theme === "white" ? "text-black" : "text-white"
+            }`}
+          >
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleCameraAccess}
@@ -282,7 +297,9 @@ const MiddSection = ({theme}:Props) => {
                 placeholder="Enter YouTube video URL"
                 value={youtubeUrl}
                 onChange={handleYoutubeUrlChange}
-                className={`border-2 p-2 ps-4 rounded-lg w-full ${theme === "white" ? "bg-[#f9f9f9]": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}
+                className={`border-2 p-2 ps-4 rounded-lg w-full ${
+                  theme === "white" ? "bg-[#f9f9f9]" : "bg-dark border-gray-600"
+                } ${theme === "white" ? "text-black" : "text-white"}`}
               />
               {youtubeUrl && (
                 <div className="youtube-video-preview mt-2">
@@ -329,8 +346,8 @@ const MiddSection = ({theme}:Props) => {
           )}
         </div>
       </div>
-      
-      <div className="h-[80vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
+
+      <div className="h-[77vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
         {dis &&
           dis.map((post, i) => {
             const userContent = user.find((us) => us.user_id === post.user_id);
@@ -338,13 +355,19 @@ const MiddSection = ({theme}:Props) => {
             return (
               <div
                 key={i}
-                className={`"post border rounded-2xl p-4 flex flex-col gap-6" ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}
+                className="post bg-white border rounded-2xl p-4 flex flex-col gap-6"
               >
                 <div className="post_hero flex justify-between">
                   <div className="left flex gap-4">
                     <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
                     <div className="detail flex flex-col justify-between">
-                      <h1 className={`text-xl font-medium ${theme === "white" ? "text-black": "text-white"}`}>{post.topic}</h1>
+                      <h1
+                        className={`text-xl font-medium ${
+                          theme === "white" ? "text-black" : "text-white"
+                        }`}
+                      >
+                        {post.topic}
+                      </h1>
                       <div className="user flex gap-2 items-center">
                         <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
                         <p className="text-blue-600 cursor-pointer">
@@ -360,13 +383,19 @@ const MiddSection = ({theme}:Props) => {
                     <ThreeDot />
                   </div>
                 </div>
-                <h1 className={`${theme === "white" ? "text-black": "text-white"}`}>{post.content}</h1>
+                <h1
+                  className={`${
+                    theme === "white" ? "text-black" : "text-white"
+                  }`}
+                >
+                  {post.content}
+                </h1>
                 <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
                   <li>#{post.tag}</li>
                 </ul>
                 <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
                 <div className="post_footer flex justify-between text-gray-500">
-                <ul className="flex gap-2 md:gap-8">
+                  <ul className="flex gap-2 md:gap-8">
                     <li
                       className="flex items-center gap-2 cursor-pointer"
                       onClick={() => setLikePost(!likePost)}
@@ -396,16 +425,24 @@ const MiddSection = ({theme}:Props) => {
         {postData.map((p, i) => (
           <div
             key={i}
-            className={`"post border rounded-2xl p-4 flex flex-col gap-6" ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}
+            className={`"post border rounded-2xl p-4 flex flex-col gap-6" ${
+              theme === "white" ? "bg-white" : "bg-black border-gray-600"
+            }`}
           >
             <div className="post_hero flex justify-between">
               <div className="left flex gap-4">
                 <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
                 <div className="detail flex flex-col justify-between">
-                <h1 className={`text-xl font-medium ${theme === "white" ? "text-black": "text-white"}`}>topic</h1>
+                  <h1
+                    className={`text-xl font-medium ${
+                      theme === "white" ? "text-black" : "text-white"
+                    }`}
+                  >
+                    topic
+                  </h1>
                   <div className="user flex gap-2 items-center">
                     <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                    <p className="text-blue-600 cursor-pointer">User</p>
+                    <p className="text-blue-600 cursor-pointer">Unknown User</p>
                     <p className="text-sm text-gray-400">| Just Now</p>
                   </div>
                 </div>
@@ -414,8 +451,12 @@ const MiddSection = ({theme}:Props) => {
                 <ThreeDot />
               </div>
             </div>
-            <h1 className={`${theme === "white" ? "text-black": "text-white"} my-2`}>content texti</h1>
-            <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2 mb-2">
+            <h1
+              className={`${theme === "white" ? "text-black" : "text-white"}`}
+            >
+              content texti
+            </h1>
+            <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
               <li>#tags</li>
             </ul>
             {/* <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div> */}
@@ -428,11 +469,11 @@ const MiddSection = ({theme}:Props) => {
                   {likePost ? <LikedIcon /> : <LikeIcon />}
                   Like
                 </li>
-                <li className="flex items-center gap-3 cursor-pointer">
+                <li className="flex items-center gap-2 cursor-pointer">
                   <CommentIcon /> Comment
                 </li>
                 <li
-                  className="flex items-center cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer"
                   onClick={() => setSavePost(!savePost)}
                 >
                   {savePost ? <SavedIcon /> : <SaveIcon />}

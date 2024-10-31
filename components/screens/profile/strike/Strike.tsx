@@ -15,12 +15,14 @@ const months = [
   "Mar",
   "Apr",
 ];
-
+type Props = {
+  theme:string;
+}
 const days = 52 * 7;
 
-const Strike = () => {
+const Strike = ({theme}:Props) => {
   return (
-    <div className="strike bg-[#f9f9f9] p-4 mb-8 rounded-xl">
+    <div className={`strike p-4 mb-8 nax-w-[95%] mx-auto rounded-xl ${theme === "white" ? "bg-whitesecond text-black": "bg-black text-white border border-gray-600"}`}>
       <h2 className="font-semibold text-lg my-2 mb-8">1,390 strike in the last month</h2>
 
       <div className="strikes my-4">

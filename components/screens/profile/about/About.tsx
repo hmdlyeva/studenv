@@ -2,11 +2,13 @@ import Arrow from "@/components/ui/Arrow";
 import DownArrow from "@/components/ui/DownArrow";
 import React from "react";
 
-
-const About = () => {
+type Props = {
+  theme:string;
+}
+const About = ({theme}:Props) => {
   return (
-    <div className="about w-full flex gap-10 py-20">
-      <div className="left bg-[#f9f9f9] w-[55%] rounded-xl flex flex-col justify-between p-8">
+    <div className={`about w-full flex md:flex-row flex-col gap-10 py-20 ${theme === "white" ? "text-black": "text-white"}`}>
+      <div className={`left md:w-[55%] mx-auto w-[95%] rounded-xl flex flex-col justify-between p-8 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
         <div className="upper flex flex-col gap-2">
           <h2 className="font-semibold text-xl">Experience</h2>
           <p>
@@ -14,7 +16,7 @@ const About = () => {
             development.
           </p>
         </div>
-        <hr/>
+        <div className={`${theme === "white" ? "bg-gray-300 h-[1px]": "bg-gray-600 h-[1px]"}`}/>
         <div className="down flex flex-col gap-4 max-w-[90%]">
           <h3 className="font-semibold text-lg">About me</h3>
           <p>
@@ -35,20 +37,21 @@ const About = () => {
           </span>
         </div>
       </div>
-      <div className="right bg-[#f9f9f9] w-[45%] rounded-xl p-8">
+
+      <div className={`right md:w-[55%] mx-auto w-[95%] rounded-xl p-8 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
         <h3 className="font-semibold text-lg">Skills</h3>
         <div className="tags my-3">
-          <ul className="flex items-center gap-2 text-black">
-            <li className="rounded-2xl border border-black p-1 px-3 flex justify-center items-center font-medium">
+          <ul className="flex items-center gap-2">
+            <li className={`rounded-2xl border p-1 px-3 flex justify-center items-center font-medium ${theme === "white" ? "border-black text-black": "border-gray-600 text-white"}`}>
               UX Design
             </li>
-            <li className="rounded-2xl border border-black p-1 px-3 flex justify-center items-center font-medium">
+            <li className={`rounded-2xl border p-1 px-3 flex justify-center items-center font-medium ${theme === "white" ? "border-black text-black": "border-gray-600 text-white"}`}>
               Product Design
             </li>
-            <li className="rounded-2xl border border-black p-1 px-3 flex justify-center items-center font-medium">
+            <li className={`rounded-2xl border p-1 px-3 flex justify-center items-center font-medium ${theme === "white" ? "border-black text-black": "border-gray-600 text-white"}`}>
               Webflow
             </li>
-            <li className="rounded-2xl border border-black p-1 px-3 flex justify-center items-center font-medium">
+            <li className={`rounded-2xl border p-1 px-3 flex justify-center items-center font-medium ${theme === "white" ? "border-black text-black": "border-gray-600 text-white"}`}>
               Figma
             </li>
           </ul>
@@ -82,7 +85,7 @@ const About = () => {
 
 
         <div className="btns w-full flex gap-4 mt-8">
-            <button className="bg-white p-2 w-1/2 border rounded-lg">Add to list</button>
+            <button className={`p-2 w-1/2 border rounded-lg ${theme === "white" ? "bg-white text-black": "bg-black text-white border-gray-600"}`}>Add to list</button>
             <button className="bg-black p-2 w-1/2 border rounded-lg text-white">Message</button>
         </div>
       </div>

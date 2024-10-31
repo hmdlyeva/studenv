@@ -1,14 +1,16 @@
 import ProfileIcon from "@/components/ui/ProfileIcon";
 import Time from "@/components/ui/Time";
 import React from "react";
-
-const Detail = () => {
+type Props = {
+  theme:string;
+}
+const Detail = ({theme}:Props) => {
   return (
-    <div className="detail">
+    <div className={`detail ${theme === "white" ? "text-black": "text-white"}`}>
       <div className="sections flex w-full items-center my-10 mt-16 gap-6">
-        <div className="persentage flex items-center w-1/2 border rounded-xl p-4 bg-white gap-4">
-          <div className="circle border-2 w-20 h-20 rounded-full flex justify-center items-center">
-            <ProfileIcon />
+        <div className={`persentage flex items-center w-1/2 border rounded-xl p-4 gap-4 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
+          <div className={`circle border-2 w-20 h-20 rounded-full flex justify-center items-center ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
+            <ProfileIcon color="#a2a2a2"/>
           </div>
           <div className="detail">
             <h2 className="font-semibold text-lg">12%</h2>
@@ -16,8 +18,8 @@ const Detail = () => {
           </div>
         </div>
 
-        <div className="hours flex items-center w-1/2 border rounded-xl p-4 bg-white gap-4 ">
-          <div className="circle border-2 w-20 h-20 rounded-full flex justify-center items-center">
+        <div className={`hours flex items-center w-1/2 border rounded-xl p-4 gap-4 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
+        <div className={`circle border-2 w-20 h-20 rounded-full flex justify-center items-center ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
             <Time />
           </div>
           <div className="detail">
@@ -27,8 +29,8 @@ const Detail = () => {
         </div>
       </div>
 
-      <div className="p-10 border bg-white my-2 rounded-lg flex justify-between w-full items-center">
-        <div className="left w-2/5 flex flex-col gap-6">
+      <div className={`p-10 border my-2 rounded-lg flex md:flex-row flex-col justify-between w-full items-center ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
+        <div className="left md:w-2/5 w-[95%] mx-auto flex flex-col gap-6 ">
           <p>One important thing...</p>
           <h1 className="font-semibold text-xl">
             Arlene is waiting for the draft contact
@@ -37,7 +39,10 @@ const Detail = () => {
             Create contact
           </button>
         </div>
-        <div className="right w-3/5 m-2 border rounded-sm py-10 px-16">
+
+
+
+        <div className={`right md:w-3/5 w-[95%] mx-auto m-2 border rounded-sm py-10 px-16 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
           <div className="up flex gap-20 items-center pb-4">
             <img
               src="https://i.pinimg.com/736x/fb/99/a5/fb99a5c7ce5b313ed1c4e71ee0260a9b.jpg"
@@ -152,9 +157,12 @@ const Detail = () => {
             </div>
           </div>
         </div>
+
+
+
       </div>
     </div>
   );
-};
+};2
 
 export default Detail;

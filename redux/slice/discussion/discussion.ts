@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const baseURL = "http://127.0.0.1:8000/discussions/";
+const baseURL = "https://studenv-2mo8x.ondigitalocean.app/discussions/";
 
 export const getDisData = createAsyncThunk("dis/getDisData", async () => {
   const response = await axios.get(baseURL);

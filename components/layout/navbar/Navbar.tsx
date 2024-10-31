@@ -9,18 +9,36 @@ import ThreeDot from "@/components/ui/ThreeDot";
 import { getUserData, User } from "@/redux/slice/auth/auth";
 import { AppDispatch, RootState } from "@/redux/store/store";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-const heroLinks = ["Explore", "My Community", "Event", "Settings"];
-
-const Navbar = () => {
+const heroLinks = [
+  { title:"Explore", url:"/"},{ title:"My Community", url:"/mycommunity"},{ title:"Events", url:"/events"} ,{ title:"Companies", url:"/companies"},{ title:"Resouces", url:"/resources"} ,{ title:"Settings", url:"/profile"} ];
+type Props = {
+  url: string;
+};
+const Navbar = ({ url }: Props) => {
   const [channelModal, setchannelModal] = useState(false);
   const [userModal, setUserModal] = useState(false);
   const [isActive, setIsActive] = useState(0);
   const [luserData, setUserData] = useState<User>();
   const router = useRouter();
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "white" : "dark";
+    localStorage.setItem("theme", newTheme);
+    setTheme(newTheme);
+  };
+
+  const pathname = usePathname()
 
   const addChannelModal = () => {
     setchannelModal(!channelModal);
@@ -29,8 +47,9 @@ const Navbar = () => {
     setUserModal(!userModal);
   };
 
-  const handlelinkHover = (i: number) => {
+  const handlelinkHover = (i: number, url:string) => {
     setIsActive(i);
+    router.push(url)
   };
 
   const users = useSelector((state: RootState) => state.users.users);
@@ -60,14 +79,17 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="up pt-4 pb-4 border-b-2">
+      <div className={`up pt-4 pb-4 border-b-2 ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
         <div className="container flex justify-between">
-          <div className="logo flex gap-1 items-center cursor-pointer" onClick={()=> router.push('/')}>
+          <div
+            className="logo flex gap-1 items-center cursor-pointer"
+            onClick={() => router.push("/")}
+          >
             <Image width={50} height={30} alt="logo" src={"/images/logo.png"} />
             <h1 className="font-bold text-lg ">StudenV</h1>
           </div>
 
-          <div className="search_bar flex relative w-1/2">
+          <div className="sm:block hidden search_bar lg:flex relative w-1/2">
             <div className="icon absolute top-4 left-3">
               <SearchIcon />
             </div>
@@ -76,11 +98,13 @@ const Navbar = () => {
               name=""
               id=""
               placeholder="Search..."
-              className="border-2 p-2 ps-10 rounded-lg w-full bg-[#f9f9f9]"
+              className={`border-2 p-2 ps-10 rounded-lg w-full ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600"}`}
             />
           </div>
+
           <div className="right flex gap-5 items-center">
-            <div className="language border p-1 rounded-3xl flex gap-1 items-center cursor-pointer">
+
+            <div className={`md:visible hidden language border p-1 rounded-3xl lg:flex gap-1 items-center cursor-pointer ${theme === "white" ? "bg-white": "bg-dark border-gray-600"}`}>
               <div className="">
                 <AzImg />
               </div>
@@ -92,12 +116,12 @@ const Navbar = () => {
             {/* <div className="cursor-pointer">
               <ChatIcon />
             </div> */}
-            <div className="cursor-pointer">
+            <div className="cursor-pointer md:block hidden">
               <Notification />
             </div>
 
             {!luserData ? (
-              <div className="user flex gap-2 items-center">
+              <div className="user flex gap-2 items-center relative">
                 <div className="text">{fullName}</div>
                 <Image
                   alt="user_img"
@@ -113,12 +137,11 @@ const Navbar = () => {
                   <DownArrow />
                 </div>
                 {userModal && (
-                  <div className="cursor-pointer z-10 p-4 pr-1 absolute top-[70px] right-36 w-64 border rounded-xl bg-[#fff] flex flex-col gap-3">
+                  <div className={`cursor-pointer z-10 p-4 pr-1 absolute top-[50px] right-0 w-64 border rounded-xl flex flex-col gap-3 ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
                     <div
                       className="flex gap-4 items-center"
                       onClick={() => {
-                        localStorage.clear();
-                        router.push("/login");
+                        router.push("/profile");
                       }}
                     >
                       <svg
@@ -134,8 +157,7 @@ const Navbar = () => {
                     <div
                       className="flex gap-4 items-center"
                       onClick={() => {
-                        localStorage.clear();
-                        router.push("/login");
+                        router.push("/profile");
                       }}
                     >
                       <svg
@@ -146,14 +168,11 @@ const Navbar = () => {
                       >
                         <path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9l.3-.5z" />
                       </svg>
-                      Norifications
+                      Notifications
                     </div>
                     <div
                       className="flex gap-4 items-center"
-                      onClick={() => {
-                        localStorage.clear();
-                        router.push("/login");
-                      }}
+                      onClick={toggleTheme}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +182,7 @@ const Navbar = () => {
                       >
                         <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
                       </svg>
-                      Settings
+                      Theme {theme}
                     </div>
 
                     <hr />
@@ -171,8 +190,7 @@ const Navbar = () => {
                     <div
                       className="flex gap-4 items-center text-blue-600"
                       onClick={() => {
-                        localStorage.clear();
-                        router.push("/login");
+                        router.push("/profile");
                       }}
                     >
                       <svg
@@ -189,8 +207,7 @@ const Navbar = () => {
                     <div
                       className="flex gap-2 items-center"
                       onClick={() => {
-                        localStorage.clear();
-                        router.push("/login");
+                        router.push("/profile");
                       }}
                     >
                       <svg
@@ -206,11 +223,10 @@ const Navbar = () => {
                     <div
                       className="flex gap-4 items-center"
                       onClick={() => {
-                        localStorage.clear();
                         router.push("/profile");
                       }}
                     >
-                      <ProfileIcon/>
+                      <ProfileIcon />
                       Edit profile
                     </div>
                     <hr />
@@ -240,49 +256,55 @@ const Navbar = () => {
             ) : (
               <div className="cursor-pointer">login</div>
             )}
+
           </div>
+
         </div>
       </div>
 
-      <div className="down pt-6 border-b-2">
-        <div className="container flex justify-between items-center">
-          <div className="left flex gap-24 items-center">
-            <h1 className="font-semibold text-3xl mt-[-20px]">Community</h1>
+      {url !== "profile" && (
+        <div className={`down pt-6 border-b-2 ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
+          <div className="container flex justify-between items-center">
+            <div className="left flex gap-24 items-center w-full">
+              <h1 className="font-semibold text-3xl mt-[-20px] md:visible hidden">Community</h1>
 
-            <ul className="flex gap-6 text-[18px] font-medium">
-              {heroLinks.map((link, i) => (
-                <li
-                  key={i}
-                  className={`cursor-pointer ${
-                    isActive === i &&
-                    "text-blue-700 flex flex-col justify-between"
-                  }`}
-                  onClick={() => handlelinkHover(i)}
-                >
-                  {link}
-                  <div
-                    className={`w-auto h-[2px] ${
-                      isActive === i && "bg-blue-700 mt-6"
+              <ul className="flex gap-6 text-[18px] font-medium max-w-[80%] overflow-x-auto scrollbar-none pe-4 me-6 md:ms-0 ms-4">
+                {heroLinks.map((link, i) => (
+                  <li
+                    key={i}
+                    className={`cursor-pointer shrink-0 ${
+                      link.url === pathname &&
+                      "text-blue-700 flex flex-col justify-between"
                     }`}
-                  ></div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                    onClick={() => handlelinkHover(i, link.url)}
+                  >
+                    {link.title}
+                    <div
+                      className={`w-auto h-[2px] ${
+                        link.url === pathname && "bg-blue-700 mt-6"
+                      }`}
+                    ></div>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div
-            className={`threedot cursor-pointer ${channelModal && "relative"}`}
-            onClick={() => addChannelModal()}
-          >
-            <ThreeDot />
-            {channelModal && (
-              <div className="p-4 pr-8 absolute top-6 right-0 w-48 border rounded-xl bg-[#f9f9f9] flex gap-2 items-center">
-                <PlusIcon /> add channel
-              </div>
-            )}
+            <div
+              className={`threedot cursor-pointer -mt-4 -ms-4 ${
+                channelModal && "relative"
+              }`}
+              onClick={() => addChannelModal()}
+            >
+              <ThreeDot />
+              {channelModal && (
+                <div className={`p-4 pr-8 absolute top-6 right-0 w-48 border rounded-xl flex gap-2 items-center ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
+                  <PlusIcon /> add channel
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
