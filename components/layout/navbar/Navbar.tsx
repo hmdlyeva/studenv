@@ -21,10 +21,11 @@ type Props = {
 const Navbar = ({ url }: Props) => {
   const [channelModal, setchannelModal] = useState(false);
   const [userModal, setUserModal] = useState(false);
-  const [isActive, setIsActive] = useState(0);
+  // const [isActive, setIsActive] = useState(0);
   const [luserData, setUserData] = useState<User>();
   const router = useRouter();
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
+  const [theme, setTheme] = useState("white");
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
@@ -48,7 +49,7 @@ const Navbar = ({ url }: Props) => {
   };
 
   const handlelinkHover = (i: number, url:string) => {
-    setIsActive(i);
+    // setIsActive(i);
     router.push(url)
   };
 

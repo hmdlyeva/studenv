@@ -1,22 +1,10 @@
 "use client";
 import Arrow from "@/components/ui/Arrow";
-import Camera from "@/components/ui/Camera";
-import CommentIcon from "@/components/ui/CommentIcon";
-import FolderIcon from "@/components/ui/FolderIcon";
-import ImageIcon from "@/components/ui/ImageIcon";
-import LikedIcon from "@/components/ui/LikedIcon";
-import LikeIcon from "@/components/ui/LikeIcon";
-import LocationIcon from "@/components/ui/LocationIcon";
-import SavedIcon from "@/components/ui/SavedIcon";
-import SaveIcon from "@/components/ui/SaveIcon";
-import ShareIcon from "@/components/ui/ShareIcon";
-import ThreeDot from "@/components/ui/ThreeDot";
-import VideoIcon from "@/components/ui/VideoIcon";
 import { getUserData } from "@/redux/slice/auth/auth";
-import { getDisData, postDisData } from "@/redux/slice/discussion/discussion";
-import { AppDispatch, RootState } from "@/redux/store/store";
-import React, { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { getDisData } from "@/redux/slice/discussion/discussion";
+import { AppDispatch } from "@/redux/store/store";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 type Props = {
   theme: string;
 };
@@ -38,8 +26,8 @@ const tags = [
 ];
 
 const MiddSection = ({ theme }: Props) => {
-  const user = useSelector((state: RootState) => state.users.users);
-  const dis = useSelector((state: RootState) => state.diss.diss);
+  // const user = useSelector((state: RootState) => state.users.users);
+  // const dis = useSelector((state: RootState) => state.diss.diss);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
@@ -47,18 +35,18 @@ const MiddSection = ({ theme }: Props) => {
     dispatch(getDisData());
   }, []);
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", options)
-      .format(date)
-      .replace(",", "");
-  };
+  // const formatDate = (dateString: string) => {
+  //   const options: Intl.DateTimeFormatOptions = {
+  //     day: "numeric",
+  //     month: "short",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   };
+  //   const date = new Date(dateString);
+  //   return new Intl.DateTimeFormat("en-US", options)
+  //     .format(date)
+  //     .replace(",", "");
+  // };
 
   return (
     <div className="middle w-full flex flex-col gap-6 h-full py-6">

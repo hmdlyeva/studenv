@@ -4,16 +4,17 @@ import FilterSection from '@/components/screens/resouces/filtersection/FilterSec
 import MiddSection from '@/components/screens/resouces/middSection/MiddSection'
 import React, { useEffect, useState } from 'react'
 
-type Props = {}
 
-const Resources = (props: Props) => {
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
-    useEffect(() => {
-      const storedTheme = localStorage.getItem("theme");
-      if (storedTheme) {
-        setTheme(storedTheme);
-      }
-    }, []);
+const Resources = () => {
+  const [theme, setTheme] = useState("white");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, []);
+
   return (
     <>
     <Navbar url="/resources"/>

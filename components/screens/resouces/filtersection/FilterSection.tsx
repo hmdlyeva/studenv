@@ -5,7 +5,7 @@ import ThreeDot from "@/components/ui/ThreeDot";
 import XIcon from "@/components/ui/XIcon";
 import React, { useState } from "react";
 
-const channelData = [1, 2, 3, 4, 5, 6, 7, 8];
+// const channelData = [1, 2, 3, 4, 5, 6, 7, 8];
 const tags = [
   {
     title: "Safety & Security",
@@ -61,7 +61,7 @@ const FilterSection = ({theme}:Props) => {
           <SearchIcon />
         </div>
         <p className="w-2/5 md:block hidden">
-          Your search for <strong>"Human Trafficking"</strong> returns 180
+          Your search for <strong>&quot;Human Trafficking&quot;</strong> returns 180
           results
         </p>
       </div>

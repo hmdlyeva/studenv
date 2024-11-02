@@ -6,13 +6,15 @@ import MiddSection from "@/components/screens/mycommunity/middSection/MiddSectio
 import React, { useEffect, useState } from "react";
 
 const MyCommunity = () => {
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
-    useEffect(() => {
-      const storedTheme = localStorage.getItem("theme");
-      if (storedTheme) {
-        setTheme(storedTheme);
-      }
-    }, []);
+  const [theme, setTheme] = useState("white");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, []);
+
   return (
     <>
     <Navbar url="/mycommunity"/>

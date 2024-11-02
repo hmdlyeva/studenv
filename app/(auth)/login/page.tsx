@@ -72,8 +72,10 @@ const router = useRouter()
         console.log(data)
         const response = await login(data);
         if (response) {
-          localStorage.setItem("accessToken", response.access_token);
-          localStorage.setItem("confirmEmail", values.email)
+          if (typeof window !== "undefined") {
+            localStorage.setItem("accessToken", response.access_token);
+            localStorage.setItem("confirmEmail", values.email);
+          }
 
           router.push("/")
         }

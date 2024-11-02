@@ -15,10 +15,12 @@ const Otp = () => {
     const [confirmEmail, setConfirmEmail] = useState<string>("");
 
     useEffect(() => {
-        const email = localStorage.getItem("confirmEmail");
-        if (email) {
-            setConfirmEmail(email); 
-        }
+        if (typeof window !== "undefined") {
+            const email = localStorage.getItem("confirmEmail");
+            if (email) {
+                setConfirmEmail(email); 
+            }
+          }
     }, []);
 
     const formatEmail = (email: string) => {

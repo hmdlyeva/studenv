@@ -6,13 +6,15 @@ import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
 
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
+  const [theme, setTheme] = useState("white");
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
       setTheme(storedTheme);
     }
   }, []);
+
 
   return (
     <div className={`pt-10 dashboard ${theme === "white" ? "bg-whitesecond": "bg-secondblack"} `}>

@@ -163,6 +163,6 @@ const Detail = ({theme}:Props) => {
       </div>
     </div>
   );
-};2
+};
 
 export default Detail;

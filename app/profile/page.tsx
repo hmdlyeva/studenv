@@ -8,13 +8,15 @@ import React, { useEffect, useState } from 'react'
 
 
 const Profile = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
+  const [theme, setTheme] = useState("white");
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
       setTheme(storedTheme);
     }
   }, []);
+
   return (
     <div className={`profile ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600"}`}>
         <Navbar url="profile"/>

@@ -1,20 +1,15 @@
 "use client";
-import Camera from "@/components/ui/Camera";
 import CommentIcon from "@/components/ui/CommentIcon";
-import FolderIcon from "@/components/ui/FolderIcon";
-import ImageIcon from "@/components/ui/ImageIcon";
 import LikedIcon from "@/components/ui/LikedIcon";
 import LikeIcon from "@/components/ui/LikeIcon";
-import LocationIcon from "@/components/ui/LocationIcon";
 import SavedIcon from "@/components/ui/SavedIcon";
 import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
-import VideoIcon from "@/components/ui/VideoIcon";
 import { getUserData } from "@/redux/slice/auth/auth";
-import { getDisData, postDisData } from "@/redux/slice/discussion/discussion";
+import { getDisData } from "@/redux/slice/discussion/discussion";
 import { AppDispatch, RootState } from "@/redux/store/store";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];

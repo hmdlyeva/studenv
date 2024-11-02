@@ -80,9 +80,11 @@ const Register = () => {
         const response = await register(values);
         // Başarılı kayıt işleminden sonra yapılacak işlemler
         if (response) {
+          if (typeof window !== "undefined") {
           localStorage.setItem("confirmEmail", values.email)
-        router.push("/otp")
         }
+        router.push("/otp")
+      }
         console.log("Registration successful");
       } catch (error) {
         console.error("Registration failed", error);

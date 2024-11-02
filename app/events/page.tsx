@@ -6,13 +6,15 @@ import MiddSection from "@/components/screens/events/middSection/MiddSection";
 import React, { useEffect, useState } from "react";
 
 const Events = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "white");
+  const [theme, setTheme] = useState("white");
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
       setTheme(storedTheme);
     }
   }, []);
+
   return (
     <>
       <Navbar url="/events" />
