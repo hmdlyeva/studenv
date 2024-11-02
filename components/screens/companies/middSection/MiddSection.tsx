@@ -1,190 +1,180 @@
 "use client";
-import CommentIcon from "@/components/ui/CommentIcon";
-import LikedIcon from "@/components/ui/LikedIcon";
-import LikeIcon from "@/components/ui/LikeIcon";
-import SavedIcon from "@/components/ui/SavedIcon";
 import SaveIcon from "@/components/ui/SaveIcon";
-import ShareIcon from "@/components/ui/ShareIcon";
-import ThreeDot from "@/components/ui/ThreeDot";
-import { getUserData } from "@/redux/slice/auth/auth";
-import { getDisData } from "@/redux/slice/discussion/discussion";
+import {
+  getCompanyDataById,
+} from "@/redux/slice/companies/companies";
 import { AppDispatch, RootState } from "@/redux/store/store";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 type Props = {
   theme: string;
+  clickedCompany: string;
 };
-const MiddSection = ({ theme }: Props) => {
-  const user = useSelector((state: RootState) => state.users.users);
-  const dis = useSelector((state: RootState) => state.diss.diss);
+
+const links = ["Şirkət haqqında", "Son iş elanları"];
+const MiddSection = ({ theme, clickedCompany }: Props) => {
+  const company = useSelector((state: RootState) => state.companies.company);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUserData());
-    dispatch(getDisData());
-  }, []);
+    if (clickedCompany) {
+      dispatch(getCompanyDataById(clickedCompany));
+    }
+  }, [clickedCompany, dispatch]);
 
-  const [likePost, setLikePost] = useState(false);
-  const [savePost, setSavePost] = useState(false);
+  // const [likePost, setLikePost] = useState(false);
+  // const [savePost, setSavePost] = useState(false);
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", options)
-      .format(date)
-      .replace(",", "");
-  };
+  // const formatDate = (dateString: string) => {
+  //   const options: Intl.DateTimeFormatOptions = {
+  //     day: "numeric",
+  //     month: "short",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   };
+  //   const date = new Date(dateString);
+  //   return new Intl.DateTimeFormat("en-US", options)
+  //     .format(date)
+  //     .replace(",", "");
+  // };
+
+  const [clickledBtn, setclickledBtn] = useState(0);
 
   return (
-    <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto">
-      <div className="h-[89vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
-        {dis &&
-          dis.map((post, i) => {
-            const userContent = user.find((us) => us.user_id === post.user_id);
+    <div className="middle md:w-4/5 h-full w-[95%] mx-auto">
+      <div className="h-full flex flex-col">
+        <div className="bg-slate-200 w-full h-64 relative">
+          <div className="bg-slate-300 w-32 h-32 rounded-lg absolute -bottom-4 left-8"></div>
+        </div>
 
-            return (
+        <div className="detail p-8">
+          <h1
+            className={`text-xl font-medium ${
+              theme === "white" ? "text-black" : "text-white"
+            }`}
+          >
+            {company.company_name}
+          </h1>
+          <p className="text-sm text-gray-400 underline cursor-pointer">
+            {company.industry}
+          </p>
+        </div>
+
+        <div
+          className={`btns flex gap-10 p-8 pt-0 ${
+            theme === "white" ? "text-black" : "text-white"
+          }`}
+        >
+          {links.map((link, i) => (
+            <div key={i}>
+              <p
+                className={`cursor-pointer hover:text-blue-600 duration-500 h-1 ${
+                  clickledBtn === i && "text-blue-600"
+                }`}
+                onClick={() => setclickledBtn(i)}
+              >
+                {link}
+              </p>
               <div
-                key={i}
-                className={`post border rounded-2xl p-4 flex flex-col gap-6 ${
-                  theme === "white" ? "bg-white" : "bg-dark border-gray-600"
+                className={`w-auto h-[2px] ${
+                  clickledBtn === i && "bg-blue-700 mt-6 duration-300"
+                }`}
+              ></div>
+            </div>
+          ))}
+        </div>
+
+        <div className="content h-[49vh] overflow-y-auto scrollbar-none">
+          {clickledBtn === 0 ? (
+            <div className="flex px-8 flex-col gap-4">
+              <h3
+                className={`font-semibold ${
+                  theme === "white" ? "text-black" : "text-white"
                 }`}
               >
-                <div className="post_hero flex justify-between">
-                  <div className="left flex gap-4">
-                    <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
-                    <div className="detail flex flex-col justify-between">
-                      <h1
-                        className={`text-xl font-medium ${
-                          theme === "white" ? "text-black" : "text-white"
-                        }`}
-                      >
-                        {post.topic}
-                      </h1>
-                      <div className="user flex gap-2 items-center">
-                        <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                        <p className="text-blue-600 cursor-pointer">
-                          {userContent ? userContent.name : "Unknown User"}
-                        </p>
-                        <p className="text-sm text-gray-400">
-                          | Just {formatDate(post.date_of_created)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="rotate-90 pr-10 cursor-pointer">
-                    <ThreeDot />
+                Şirkət haqqında
+              </h3>
+              <p className="text-sm text-gray-500">{company.description}</p>
+
+              <div className="detail flex gap-8">
+                <div className="left w-1/2">
+                  <div className="map">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d97210.33214846!2d49.9122176!3d40.412774399999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2saz!4v1727381497381!5m2!1sen!2saz"
+                      width="100%"
+                      height="250"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
                   </div>
                 </div>
-                <h1
-                  className={`${
-                    theme === "white" ? "text-black" : "text-white"
-                  }`}
-                >
-                  {post.content}
-                </h1>
-                <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
-                  <li>#{post.tag}</li>
-                </ul>
-                <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
-                <div className="post_footer flex justify-between text-gray-500">
-                  <ul className="flex gap-2 md:gap-8">
-                    <li
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => setLikePost(!likePost)}
-                    >
-                      {likePost ? <LikedIcon /> : <LikeIcon />}
-                      Like
-                    </li>
-                    <li className="flex items-center gap-2 cursor-pointer">
-                      <CommentIcon /> Comment
-                    </li>
-                    <li
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => setSavePost(!savePost)}
-                    >
-                      {savePost ? <SavedIcon /> : <SaveIcon />}
-                      Save
-                    </li>
-                  </ul>
-                  <p className="flex items-center gap-2 cursor-pointer">
-                    <ShareIcon /> Share
+                <div className="right flex flex-col gap-3 w-1/2">
+                  <h3>Ünvan</h3>
+                  <p className="text-sm text-gray-400">
+                    AZ1005, Bakı ş., Səbail r-nu, Yusif Məmmədəliyev küç. 13
+                  </p>
+                  <h3>Əlaqə nömrəsi</h3>
+                  <p className="text-sm text-gray-400">
+                    *8123 / (+994 12) 496 50 04 , (+994 12) 496 51 00
+                  </p>
+                  <h3>Vebsayt</h3>
+                  <p className="text-sm text-gray-400">
+                    www.pashabank.az/lang ,az/
                   </p>
                 </div>
               </div>
-            );
-          })}
-
-        {postData.map((p, i) => (
-          <div
-            key={i}
-            className={`"post border rounded-2xl p-4 flex flex-col gap-6" ${
-              theme === "white" ? "bg-white" : "bg-black border-gray-600"
-            }`}
-          >
-            <div className="post_hero flex justify-between">
-              <div className="left flex gap-4">
-                <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
-                <div className="detail flex flex-col justify-between">
-                  <h1
-                    className={`text-xl font-medium ${
-                      theme === "white" ? "text-black" : "text-white"
-                    }`}
-                  >
-                    topic
-                  </h1>
-                  <div className="user flex gap-2 items-center">
-                    <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                    <p className="text-blue-600 cursor-pointer">Unknown User</p>
-                    <p className="text-sm text-gray-400">| Just Now</p>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              {postData.map((p, i) => (
+                <div
+                  key={i}
+                  className={`p-4 ps-6 border border-l-0 border-r-0 flex flex-col items-center justify-between md:flex-row cursor-pointer ${
+                    theme === "white"
+                      ? "hover:bg-slate-100 border-slate-100"
+                      : "hover:bg-zinc-800 border-zinc-800"
+                  }`}
+                >
+                  <div className="left">
+                    <h3
+                      className={`text-sm font-bold ${
+                        theme === "white" ? "text-black" : "text-white"
+                      }`}
+                    >
+                      Müştəri Meneceri (Korporativ & Insitutsional Bankçılıq)
+                    </h3>
+                    <p className="text-sm text-gray-400 pt-2">PASHA Bank</p>
+                  </div>
+                  <div className="right">
+                    <ul className="flex items-center text-sm text-gray-400 gap-4">
+                      <li>
+                        {/* <svg
+                          width="16"
+                          height="9"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon sprite-icons"
+                        >
+                          <use href="/_nuxt/251380778e318449ea4ad951e8a03ee9.svg#i-view-count" />
+                        </svg> */}
+                        <p>576</p>
+                      </li>
+                      <li>
+                        <p>30 Okt</p>
+                      </li>
+                      <li>
+                        <SaveIcon color="#A2A2A2" width="20" />
+                      </li>
+                    </ul>
                   </div>
                 </div>
-              </div>
-              <div className="rotate-90 pr-10 cursor-pointer">
-                <ThreeDot />
-              </div>
+              ))}
             </div>
-            <h1
-              className={`${theme === "white" ? "text-black" : "text-white"}`}
-            >
-              content texti
-            </h1>
-            <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
-              <li>#tags</li>
-            </ul>
-            <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
-            <div className="post_footer flex justify-between text-gray-500">
-              <ul className="flex gap-2 md:gap-8">
-                <li
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => setLikePost(!likePost)}
-                >
-                  {likePost ? <LikedIcon /> : <LikeIcon />}
-                  Like
-                </li>
-                <li className="flex items-center gap-2 cursor-pointer">
-                  <CommentIcon /> Comment
-                </li>
-                <li
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSavePost(!savePost)}
-                >
-                  {savePost ? <SavedIcon /> : <SaveIcon />}
-                  Save
-                </li>
-              </ul>
-              <p className="flex items-center gap-2 cursor-pointer">
-                <ShareIcon /> Share
-              </p>
-            </div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
     </div>
   );

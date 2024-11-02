@@ -1,29 +1,29 @@
 import Arrow from "@/components/ui/Arrow";
 import DownArrow from "@/components/ui/DownArrow";
+import { User } from "@/redux/slice/auth/auth";
+import { Prfl } from "@/redux/slice/profile/profile";
 import React from "react";
 
 type Props = {
   theme:string;
+  userData:User | null;
+  profile:Prfl | null;
 }
-const About = ({theme}:Props) => {
+const About = ({theme,userData, profile}:Props) => {
   return (
     <div className={`about w-full flex md:flex-row flex-col gap-10 py-20 ${theme === "white" ? "text-black": "text-white"}`}>
       <div className={`left md:w-[55%] mx-auto w-[95%] rounded-xl flex flex-col justify-between p-8 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
         <div className="upper flex flex-col gap-2">
           <h2 className="font-semibold text-xl">Experience</h2>
           <p>
-            I specialise in UX/UI design, brand strategy, and Webflow
-            development.
+            {profile?.bio}
           </p>
         </div>
         <div className={`${theme === "white" ? "bg-gray-300 h-[1px]": "bg-gray-600 h-[1px]"}`}/>
         <div className="down flex flex-col gap-4 max-w-[90%]">
           <h3 className="font-semibold text-lg">About me</h3>
           <p>
-            I&apos;m a Product Designer based in Melbourne, Australia. I specialise
-            in UX/UI design, brand strategy, and Webflow development. I&apos;m always
-            striving to grow and learn something new and and i don&apos;t take myself
-            too seriously.
+            {profile?.bio}
           </p>
 
           <p>
@@ -64,12 +64,12 @@ const About = ({theme}:Props) => {
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Flag_of_Australia_%28converted%29.svg/1200px-Flag_of_Australia_%28converted%29.svg.png"
             alt=""
           />
-          <p className="font-[600]">Melbourne, Australia</p>
+          <p className="font-[600]">{profile?.address}</p>
         </div>
 
         <h3 className="font-semibold text-lg mt-6">Website</h3>
         <div className="location flex items-center gap-3 my-2">
-          <p className="font-[600]">minawinkel.com</p>
+          <a href={profile?.social_links} className="font-[600]">{profile?.social_links}</a>
           <div className="-rotate-45">
             <Arrow />
           </div>
@@ -77,7 +77,7 @@ const About = ({theme}:Props) => {
 
         <h3 className="font-semibold text-lg mt-6">Email</h3>
         <div className="location flex items-center gap-3 my-2">
-          <p className="font-[600]">hello@minawinkel.com</p>
+          <p className="font-[600]">{userData?.email}</p>
           <div className="-rotate-45">
             <Arrow />
           </div>

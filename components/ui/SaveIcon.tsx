@@ -1,11 +1,15 @@
 import React from "react";
 
-
-const SaveIcon = () => {
+type Props = {
+  color?:string;
+  width?:string;
+  height?:string
+}
+const SaveIcon = ({color,width,height}:Props) => {
   return (
     <svg
-      width="24"
-      height="24"
+      width={width ? width : "24"}
+      height={height ? height : "24"}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +18,7 @@ const SaveIcon = () => {
         fill-rule="evenodd"
         clip-rule="evenodd"
         d="M6.75 6L7.5 5.25H16.5L17.25 6V19.3162L12 16.2051L6.75 19.3162V6ZM8.25 6.75V16.6838L12 14.4615L15.75 16.6838V6.75H8.25Z"
-        fill="#707070"
+        fill={color ? color : "#707070"}
       />
     </svg>
   );

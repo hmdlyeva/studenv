@@ -9,18 +9,18 @@ export const getPrflData = createAsyncThunk("prfl/getPrflData", async () => {
   return response.data;
 });
 
-// export const getLocDataById = createAsyncThunk(
-//   "locations/getLocDataById",
-//   async (id: number) => {
-//     const response = await axios.get(`${baseURL}/${id}`);
-//     return response.data;
-//   }
-// );
+export const getPrflDataById = createAsyncThunk(
+  "prfl/getPrflDataById",
+  async (id: string) => {
+    const response = await axios.get(`${baseURL}${id}`);
+    return response.data;
+  }
+);
 
 // export const delLocData = createAsyncThunk(
 //   "locations/delLocData",
 //   async (id: number) => {
-//     const response = await axios.delete(`${baseURL}/${id}`);
+//     const response = await axios.delete(`${baseURL}${id}`);
 //     return response.data;
 //   }
 // );
@@ -28,7 +28,7 @@ export const getPrflData = createAsyncThunk("prfl/getPrflData", async () => {
 // export const putLocData = createAsyncThunk(
 //   "locations/putLocData",
 //   async ({ id, newp }: { id: number; newp: Partial<Location> }) => {
-//     const response = await axios.put(`${baseURL}/${id}`, newp);
+//     const response = await axios.put(`${baseURL}${id}`, newp);
 //     return response.data;
 //   }
 // );
@@ -110,6 +110,21 @@ export const prflSlice = createSlice({
         }
       )
       .addCase(getPrflData.rejected, (state) => {
+        state.loading = false;
+      });
+
+      builder
+      .addCase(getPrflDataById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(
+        getPrflDataById.fulfilled,
+        (state, action: PayloadAction<Prfl>) => {
+          state.prfl = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(getPrflDataById.rejected, (state) => {
         state.loading = false;
       });
 

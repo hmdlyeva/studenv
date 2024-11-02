@@ -17,7 +17,7 @@ import { AppDispatch, RootState } from "@/redux/store/store";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 type Props = {
   theme:string;
 }
@@ -31,9 +31,6 @@ const MiddSection = ({theme}:Props) => {
     dispatch(getUserData());
     dispatch(getDisData());
   }, []);
-
-  // console.log(user)
-  console.log(dis);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
@@ -64,12 +61,20 @@ const MiddSection = ({theme}:Props) => {
 
   const handleCameraAccess = async () => {
     if (isActive) {
+      setShowYtInp(false)
+      setShowMap(false)
+      setPdfFileName("");
+      setSelectedImage("");
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
         setCameraStream(null);
       }
       setIsActive(false);
     } else {
+      setShowYtInp(false)
+      setShowMap(false)
+      setPdfFileName("");
+      setSelectedImage("");
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -97,6 +102,11 @@ const MiddSection = ({theme}:Props) => {
   const pdfInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVideoSource("");
+    setShowMap(false)
+    setPdfFileName("");
+    setShowYtInp(false)
+    setIsActive(false);
     const files = event.target.files;
     if (files && files.length > 0) {
       const imageUrl = URL.createObjectURL(files[0]);
@@ -105,14 +115,27 @@ const MiddSection = ({theme}:Props) => {
   };
 
   const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedImage("");
+    setShowMap(false)
+    setPdfFileName("");
+    setIsActive(false);
     const files = event.target.files;
     if (files && files.length > 0) {
       const videoUrl = URL.createObjectURL(files[0]);
       setVideoSource(videoUrl);
+      setShowYtInp(false)
+    }
+    else{
+      setVideoSource("");
     }
   };
 
   const handlePdfChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedImage("");
+    setVideoSource("");
+    setShowYtInp(false)
+    setShowMap(false)
+    setIsActive(false);
     const files = event.target.files;
     if (files && files.length > 0) {
       setPdfFileName(files[0].name);
@@ -124,9 +147,15 @@ const MiddSection = ({theme}:Props) => {
       imageInputRef.current.click();
       setSelectedImage("");
     }
+    setIsActive(false);
   };
 
   const handleVideoClick = () => {
+    setSelectedImage("");
+    setPdfFileName("");
+    setVideoSource("");
+    setShowMap(false)
+    setIsActive(false);
     setShowYtInp(!showYtInp);
     if (videoInputRef.current) {
       videoInputRef.current.click();
@@ -134,7 +163,12 @@ const MiddSection = ({theme}:Props) => {
   };
 
   const handlePdfClick = () => {
+    setSelectedImage("");
     setPdfFileName("");
+    setVideoSource("");
+    setShowMap(false)
+    setShowYtInp(false)
+    setIsActive(false);
     if (pdfInputRef.current) {
       pdfInputRef.current.click();
     }
@@ -143,10 +177,20 @@ const MiddSection = ({theme}:Props) => {
   const handleYoutubeUrlChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    setSelectedImage("");
+    setPdfFileName("");
+    setVideoSource("");
+    setShowMap(false)
+    setIsActive(false);
     setYoutubeUrl(event.target.value);
   };
 
   const handleLocationClick = () => {
+    setSelectedImage("");
+    setPdfFileName("");
+    setVideoSource("");
+    setShowYtInp(false)
+    setIsActive(false);
     setShowMap((prevState) => !prevState);
   };
 
@@ -171,7 +215,8 @@ const MiddSection = ({theme}:Props) => {
   };
 
   return (
-    <div className="middle md:max-w-[95%] flex flex-col gap-6 h-screen pb-8 overflow-y-auto scrollbar-none w-[95%] mx-auto">
+    <div className="middle flex flex-col gap-6 h-screen pb-8 overflow-y-auto scrollbar-none mx-auto px-4 lg:px-0">
+
       <div className={`card p-4 border rounded-2xl ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
         <div className="up flex gap-4 items-center">
           <div className="img w-10 h-10 rounded-lg bg-slate-400 cursor-pointer"></div>
@@ -203,19 +248,19 @@ const MiddSection = ({theme}:Props) => {
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleImageClick}
             >
-              <ImageIcon /> Images
+              <ImageIcon /> Image
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleVideoClick}
             >
-              <VideoIcon /> Videos
+              <VideoIcon /> Video
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handlePdfClick}
             >
-              <FolderIcon /> Files
+              <FolderIcon /> File
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
@@ -231,7 +276,8 @@ const MiddSection = ({theme}:Props) => {
                 ref={videoRef}
                 style={{
                   width: "100%",
-                  height: "auto",
+                  margin:"auto",
+                  height: "400px",
                   borderRadius: 20,
                   marginTop: 10,
                 }}
@@ -250,11 +296,11 @@ const MiddSection = ({theme}:Props) => {
             onChange={handleImageChange}
           />
           {selectedImage && (
-            <div className="image-preview mt-4" onClick={handleImageClick}>
+            <div className="image-preview mt-4 w-[95%] mx-auto" onClick={handleImageClick}>
               <img
                 src={selectedImage}
                 alt="Selected"
-                className="w-full h-auto rounded-2xl cursor-pointer"
+                className="object-cover h-[400px] w-full rounded-2xl cursor-pointer"
               />
             </div>
           )}
@@ -268,7 +314,7 @@ const MiddSection = ({theme}:Props) => {
           />
           {videoSource && (
             <div className="video-preview mt-4">
-              <video controls className="w-full h-auto rounded-2xl">
+              <video controls className="w-[95%] mx-auto h-[400px] rounded-2xl">
                 <source src={videoSource} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -392,59 +438,6 @@ const MiddSection = ({theme}:Props) => {
               </div>
             );
           })}
-
-        {postData.map((p, i) => (
-          <div
-            key={i}
-            className={`"post border rounded-2xl p-4 flex flex-col gap-6" ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}
-          >
-            <div className="post_hero flex justify-between">
-              <div className="left flex gap-4">
-                <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
-                <div className="detail flex flex-col justify-between">
-                <h1 className={`text-xl font-medium ${theme === "white" ? "text-black": "text-white"}`}>topic</h1>
-                  <div className="user flex gap-2 items-center">
-                    <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                    <p className="text-blue-600 cursor-pointer">User</p>
-                    <p className="text-sm text-gray-400">| Just Now</p>
-                  </div>
-                </div>
-              </div>
-              <div className="rotate-90 pr-10 cursor-pointer">
-                <ThreeDot />
-              </div>
-            </div>
-            <h1 className={`${theme === "white" ? "text-black": "text-white"} my-2`}>content texti</h1>
-            <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2 mb-2">
-              <li>#tags</li>
-            </ul>
-            {/* <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div> */}
-            <div className="post_footer flex justify-between text-gray-500">
-              <ul className="flex gap-2 md:gap-8">
-                <li
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => setLikePost(!likePost)}
-                >
-                  {likePost ? <LikedIcon /> : <LikeIcon />}
-                  Like
-                </li>
-                <li className="flex items-center gap-3 cursor-pointer">
-                  <CommentIcon /> Comment
-                </li>
-                <li
-                  className="flex items-center cursor-pointer"
-                  onClick={() => setSavePost(!savePost)}
-                >
-                  {savePost ? <SavedIcon /> : <SaveIcon />}
-                  Save
-                </li>
-              </ul>
-              <p className="flex items-center gap-2 cursor-pointer">
-                <ShareIcon /> Share
-              </p>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );

@@ -24,8 +24,8 @@ const Events = () => {
         }`}
       >
         <div className="container w-full flex flex-col md:flex-row justify-between gap-2 md:gap-6">
-          <LeftSection theme={theme} />
           <MiddSection theme={theme} />
+          <LeftSection theme={theme} />
         </div>
       </div>
     </>

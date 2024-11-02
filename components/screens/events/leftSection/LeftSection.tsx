@@ -6,7 +6,7 @@ type Props = {
 };
 const LeftSection = ({ theme }: Props) => {
   return (
-    <div className="left w-[95%] md:w-2/5 mx-auto flex flex-col">
+    <div className="left w-[95%] md:w-1/5 mx-auto flex flex-col">
       <div
         className={`card  border rounded-2xl ${
           theme === "white" ? "bg-white" : "bg-dark border-gray-600"
@@ -17,31 +17,31 @@ const LeftSection = ({ theme }: Props) => {
             theme === "white" ? "text-black" : "text-white"
           }`}
         >
-          My Event
+          All Types
         </h1>
         <div
           className={`${
             theme === "white" ? "bg-gray-300 h-[1px]" : "bg-gray-600 h-[1px]"
           }`}
         />
-        <div className="channels h-[20vh] md:h-[66vh] max-w-[95%] md:overflow-y-auto overflow-x-auto scrollbar-none flex md:flex-col flex-row gap-4">
+        <div className="channels max-h-[20vh] md:max-h-[66vh] md:overflow-y-auto overflow-x-auto scrollbar-none flex md:flex-col flex-row">
           {eventData.map((event, i) => (
             <div
               key={i}
-              className="channel p-4 min-w-[140px] flex flex-col gap-3 md:flex-row cursor-pointer"
+              className={`channel px-4 py-4 min-w-[140px] flex flex-col gap-3 md:flex-row cursor-pointer ${theme === "white" ? "hover:bg-slate-50": "hover:bg-zinc-900"}`}
             >
-              <div className="img bg-slate-300 rounded-md w-16 h-16"></div>
+              {/* <div className="img bg-slate-300 rounded-md w-16 h-16"></div> */}
               <div className="detail">
-                <p className="text-[10px] text-gray-400">19 DECEMBER 2022</p>
+                {/* <p className="text-[10px] text-gray-400">19 DECEMBER 2022</p> */}
                 <h3
                   className={`text-sm ${
                     theme === "white" ? "text-black" : "text-white"
                   }`}
                 >
-                  We The Fest (Wtf)
+                 {i%3 === 0 ? "Education" : i%3 === 1 ? "StartUp" : i%3 === 2 ? "Hackaton" : "Other"}
                 </h3>
-                <p className="text-sm text-gray-400 pt-2">
-                  912 People has jointhis event
+                <p className="text-sm text-gray-400">
+                  912 People has join this event
                 </p>
               </div>
             </div>

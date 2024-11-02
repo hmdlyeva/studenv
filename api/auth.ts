@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL = "http://127.0.0.1:8000";
+const baseURL = "https://studenv-2mo8x.ondigitalocean.app";
 
 export const register = async (data: any) => {
     try {

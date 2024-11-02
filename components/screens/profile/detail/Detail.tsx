@@ -1,10 +1,14 @@
 import ProfileIcon from "@/components/ui/ProfileIcon";
 import Time from "@/components/ui/Time";
+import { User } from "@/redux/slice/auth/auth";
+import { Prfl } from "@/redux/slice/profile/profile";
 import React from "react";
 type Props = {
   theme:string;
+  userData:User | null;
+  profile:Prfl | null;
 }
-const Detail = ({theme}:Props) => {
+const Detail = ({theme, userData, profile}:Props) => {
   return (
     <div className={`detail ${theme === "white" ? "text-black": "text-white"}`}>
       <div className="sections flex w-full items-center my-10 mt-16 gap-6">
@@ -45,16 +49,15 @@ const Detail = ({theme}:Props) => {
         <div className={`right md:w-3/5 w-[95%] mx-auto m-2 border rounded-sm py-10 px-16 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
           <div className="up flex gap-20 items-center pb-4">
             <img
-              src="https://i.pinimg.com/736x/fb/99/a5/fb99a5c7ce5b313ed1c4e71ee0260a9b.jpg"
+              src={profile?.profile_photo}
               alt=""
               className="w-28 h-28 rounded-full"
             />
             <div className="detail">
               <h1 className="font-semibold text-3xl leading-8">
-                Mina <br />
-                St. Winkel
+                {userData?.name}
               </h1>
-              <p className="text-lg">UX designer</p>
+              <p className="text-lg">{profile?.major}</p>
             </div>
           </div>
 
@@ -66,18 +69,18 @@ const Detail = ({theme}:Props) => {
                 <ul className="flex flex-col gap-10">
                   <li>
                     <p>2014-2016</p>
-                    <p>Degree Name</p>
-                    <p>University name here</p>
+                    <p>{profile?.year_of_study} course</p>
+                    <p>{profile?.university}</p>
                   </li>
                   <li>
                     <p>2010-2014</p>
-                    <p>Degree Name</p>
-                    <p>University name here</p>
+                    <p>{profile?.year_of_study} course</p>
+                    <p>{profile?.university}</p>
                   </li>
                   <li>
                     <p>2008-2010</p>
-                    <p>Degree Name</p>
-                    <p>University name here</p>
+                    <p>{profile?.year_of_study} course</p>
+                    <p>{profile?.university}</p>
                   </li>
                 </ul>
               </div>
@@ -89,7 +92,7 @@ const Detail = ({theme}:Props) => {
                 <ul>
                   <li>
                     <p>Phone</p>
-                    <p>+000 123 456 789</p>
+                    <p>+994 {profile?.phone_number}</p>
                   </li>
                 </ul>
               </div>
@@ -101,9 +104,8 @@ const Detail = ({theme}:Props) => {
 
                 <ul>
                   <li>
-                    For more Sales, Leads, Customer Engagement. Become an
-                    Author, Create information Products. All done quickly and
-                    easly. No Design orTechnical skills necessary.
+                   
+                   {profile?.bio}
                   </li>
                 </ul>
               </div>
@@ -119,10 +121,9 @@ const Detail = ({theme}:Props) => {
                       <p>Company Name</p>
                     </div>
                     <div className="right flex flex-col gap-2 w-3/5">
-                      <h3 className="">Senior UX DEsigner</h3>
+                      <h3 className="">Software Developer</h3>
                       <p>
-                        Lorem ipsum dolor sit amet is simply dump offered the
-                        printing and typesetting industry.
+                        {profile?.bio}
                       </p>
                     </div>
                   </li>

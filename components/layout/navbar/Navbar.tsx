@@ -22,7 +22,7 @@ const Navbar = ({ url }: Props) => {
   const [channelModal, setchannelModal] = useState(false);
   const [userModal, setUserModal] = useState(false);
   // const [isActive, setIsActive] = useState(0);
-  const [luserData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<User>();
   const router = useRouter();
   const [theme, setTheme] = useState("white");
 
@@ -76,7 +76,7 @@ const Navbar = ({ url }: Props) => {
     }
   }, [users]);
 
-  const fullName = luserData ? luserData.name.split(" ")[0] : "User";
+  const fullName = userData ? userData.name.split(" ")[0] : "User";
 
   return (
     <>
@@ -121,7 +121,7 @@ const Navbar = ({ url }: Props) => {
               <Notification />
             </div>
 
-            {!luserData ? (
+            {userData ? (
               <div className="user flex gap-2 items-center relative">
                 <div className="text">{fullName}</div>
                 <Image

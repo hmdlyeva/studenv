@@ -355,7 +355,9 @@ const MiddSection = ({ theme }: Props) => {
             return (
               <div
                 key={i}
-                className="post bg-white border rounded-2xl p-4 flex flex-col gap-6"
+                className={`post border rounded-2xl p-4 flex flex-col gap-6 ${
+                  theme === "white" ? "bg-white" : "bg-dark border-gray-600"
+                }`}
               >
                 <div className="post_hero flex justify-between">
                   <div className="left flex gap-4">
