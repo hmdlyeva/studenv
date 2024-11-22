@@ -45,14 +45,32 @@ const ProfileContainer = dynamic(() => import("@/container/profileContainer"), {
   loading: () => <LoadingContainer />,
 });
 
-const ProfileContainerPage = async (param:{id:string}) => {
-  const usersDataPromise = await getUsers();
-  const profilePromise = await getProfileById(param.id);
-  const userFollowersPromise = await getUserFollowers(param.id)
-  const userFollowingsPromise = await getUserFollowings(param.id)
+interface ProfilePageParams {
+  params: {
+    id: string;
+  };
+}
 
-  const [users,profile, followers, followings] = await Promise.all([usersDataPromise, profilePromise, userFollowersPromise, userFollowingsPromise]);
-  return <ProfileContainer users={users} profile={profile} followers={followers} followings={followings}/>;
+const ProfileContainerPage = async ({ params }: ProfilePageParams) => {
+  const usersDataPromise = await getUsers();
+  const profilePromise = await getProfileById(params.id);
+  const userFollowersPromise = await getUserFollowers(params.id);
+  const userFollowingsPromise = await getUserFollowings(params.id);
+
+  const [users, profile, followers, followings] = await Promise.all([
+    usersDataPromise,
+    profilePromise,
+    userFollowersPromise,
+    userFollowingsPromise,
+  ]);
+  return (
+    <ProfileContainer
+      users={users}
+      profile={profile}
+      followers={followers}
+      followings={followings}
+    />
+  );
 };
 
 export default ProfileContainerPage;
