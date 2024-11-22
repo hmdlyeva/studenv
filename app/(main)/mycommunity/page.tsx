@@ -1,4 +1,4 @@
-import { getCommunities, getDiscussions, getEvents, getUsers } from "@/api/common";
+import { getCommunities, getDiscussions, getUsers } from "@/api/common";
 import { apiConfig } from "@/apiConfig";
 import LoadingContainer from "@/container/loadingContainer";
 import { Metadata } from "next";
