@@ -1,34 +1,20 @@
 "use client";
 import { getResourceTags } from "@/api/common";
 import Arrow from "@/components/ui/Arrow";
-import { IResource } from "@/types/common.type";
+import { IResource, ITag } from "@/types/common.type";
 import React, { useEffect, useState } from "react";
 interface IProps {
   theme: string;
   resources: IResource[];
 }
-const tags = [
-  {
-    title: "Safety & Security",
-  },
-  {
-    title: "Physican Office Practice",
-  },
-  {
-    title: "Clinical Practice",
-  },
-  {
-    title: "Medical Staff",
-  },
-];
 
 const MiddSection = ({ theme, resources }: IProps) => {
-  const [tagsData, setTagsData] = useState<Record<string, any[]>>({});
+  const [tagsData, setTagsData] = useState<Record<string, ITag[]>>({});
 
   // Etiketleri her kaynak için al
   useEffect(() => {
     const fetchTags = async () => {
-      const tagsMap: Record<string, any[]> = {};
+      const tagsMap: Record<string, ITag[]> = {};
 
       await Promise.all(
         resources.map(async (resource) => {

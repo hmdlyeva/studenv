@@ -1,8 +1,6 @@
 import React from "react";
 
-type Props = {};
-
-const Hero = (props: Props) => {
+const Hero = () => {
   return (
     <div className="w-full h-[100vh] text-center bg-blue-500 text-white flex flex-col justify-center">
       <h1 className="text-6xl font-bold w-1/2 mx-auto">Student Community Base Digital Environment</h1>

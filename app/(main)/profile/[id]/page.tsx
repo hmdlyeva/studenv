@@ -1,7 +1,5 @@
 import { apiConfig } from "@/apiConfig";
 import {
-  getInspirationBySlug,
-  getLatestInspiration,
   getProfileById,
   getUserFollowers,
   getUserFollowings,
@@ -47,12 +45,11 @@ const ProfileContainer = dynamic(() => import("@/container/profileContainer"), {
   loading: () => <LoadingContainer />,
 });
 
-const ProfileContainerPage = async ({ params }: any) => {
-  const { id } = params;
+const ProfileContainerPage = async (param:{id:string}) => {
   const usersDataPromise = await getUsers();
-  const profilePromise = await getProfileById(id);
-  const userFollowersPromise = await getUserFollowers(id)
-  const userFollowingsPromise = await getUserFollowings(id)
+  const profilePromise = await getProfileById(param.id);
+  const userFollowersPromise = await getUserFollowers(param.id)
+  const userFollowingsPromise = await getUserFollowings(param.id)
 
   const [users,profile, followers, followings] = await Promise.all([usersDataPromise, profilePromise, userFollowersPromise, userFollowingsPromise]);
   return <ProfileContainer users={users} profile={profile} followers={followers} followings={followings}/>;

@@ -1,9 +1,7 @@
 import Righticon from "@/components/ui/Righticon";
 import React from "react";
 
-type Props = {};
-
-const Whoweare = (props: Props) => {
+const Whoweare = () => {
   return (
     <div className="flex flex-col justify-center items-center h-[100vh] container">
       <h2 className="text-5xl text-blue-500">Who We Are ?</h2>

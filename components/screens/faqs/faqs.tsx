@@ -1,8 +1,6 @@
 "use client";
 import React, { useState } from "react";
 
-type Props = {};
-
 const faqData = [
   {
     question: "StudenV nədir?",
@@ -47,7 +45,7 @@ const faqData = [
   },
 ];
 
-const Terms = (props: Props) => {
+const Terms = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number) => {

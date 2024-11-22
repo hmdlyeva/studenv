@@ -45,7 +45,7 @@ export default async function Home() {
   const communitiesDataPromise = await getCommunities();
   const eventsDataPromise = await getEvents();
   const discussionsDataPromise = await getDiscussions();
-  const [users, communities, events, discussions] = await Promise.all([usersDataPromise,communitiesDataPromise, eventsDataPromise, discussionsDataPromise]) 
+  const [users, communities, discussions] = await Promise.all([usersDataPromise,communitiesDataPromise, discussionsDataPromise]) 
   return (
       <MyCommunityContainer users={users} discussions={discussions} communities={communities}/>
   );

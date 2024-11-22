@@ -1,8 +1,6 @@
 import React from "react";
 
-type Props = {};
-
-const Whatwedo = (props: Props) => {
+const Whatwedo = () => {
   return (
     <div className="flex justify-center items-center h-[100vh] container gap-20">
       <div className="left md:w-3/5 w-full flex flex-col gap-4">

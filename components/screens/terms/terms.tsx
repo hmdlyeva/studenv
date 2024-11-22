@@ -1,8 +1,6 @@
 import React from "react";
 
-type Props = {};
-
-const Terms = (props: Props) => {
+const Terms = () => {
   return (
     <div className="container ">
       <h1 className="text-5xl text-blue-500 relative top-40">Terms and Conditions</h1>

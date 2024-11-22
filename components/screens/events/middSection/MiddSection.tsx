@@ -5,20 +5,13 @@ import LikeIcon from "@/components/ui/LikeIcon";
 import SavedIcon from "@/components/ui/SavedIcon";
 import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
-// import ThreeDot from "@/components/ui/ThreeDot";
-import { getUserData } from "@/redux/slice/auth/auth";
-// import { getDisData } from "@/redux/slice/discussion/discussion";
-import { getEventData } from "@/redux/slice/event/event";
-import { AppDispatch, RootState } from "@/redux/store/store";
-import { IDiscussion, IEvent, IUser } from "@/types/common.type";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import {  IEvent, IUser } from "@/types/common.type";
+import React, { useState } from "react";
 interface IProps {
   theme: string;
   users:IUser[];
   events:IEvent[];
 };
-// const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const MiddSection = ({ theme, users, events }: IProps) => {
 

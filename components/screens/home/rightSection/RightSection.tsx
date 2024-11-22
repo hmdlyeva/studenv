@@ -3,10 +3,6 @@ import ThreeDot from "@/components/ui/ThreeDot";
 import { IEvent, ITag } from "@/types/common.type";
 import React from "react";
 
-const hastagData = [1, 2, 3];
-// const otherEventData = [1, 2, 3];
-// type Props = {
-// };
 
 interface IProps {
   theme : string;
@@ -15,13 +11,7 @@ interface IProps {
   upcomingEvents:IEvent[];
 }
 
-const RightSection = ({theme, events, weeklyPopularTags, upcomingEvents}:IProps) => {
-  // const event = useSelector((state: RootState) => state.events.events);
-  // const dispatch: AppDispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(getEventData());
-  // }, []);
+const RightSection = ({theme, weeklyPopularTags, upcomingEvents}:IProps) => {
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {

@@ -212,7 +212,6 @@ const Register = () => {
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
-      // role: Yup.string().required("Role is required"),
       password: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
@@ -230,7 +229,6 @@ const Register = () => {
         };
 
         
-        // const response = await registerStudent(studentData)
         let response;
         switch (role) {
           case "Student":

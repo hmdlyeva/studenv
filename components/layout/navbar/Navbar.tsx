@@ -1,7 +1,5 @@
 "use client";
-import AzImg from "@/components/ui/AzImg";
 import DownArrow from "@/components/ui/DownArrow";
-import Notification from "@/components/ui/Notification";
 import PlusIcon from "@/components/ui/PlusIcon";
 import ProfileIcon from "@/components/ui/ProfileIcon";
 import SearchIcon from "@/components/ui/SearchIcon";

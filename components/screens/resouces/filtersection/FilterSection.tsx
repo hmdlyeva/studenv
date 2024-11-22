@@ -5,7 +5,6 @@ import ThreeDot from "@/components/ui/ThreeDot";
 import XIcon from "@/components/ui/XIcon";
 import React, { useState } from "react";
 
-// const channelData = [1, 2, 3, 4, 5, 6, 7, 8];
 const tags = [
   {
     title: "Safety & Security",

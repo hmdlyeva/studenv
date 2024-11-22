@@ -1,9 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { login } from "@/api/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getUsers, postProfile } from "@/api/common";
 
@@ -46,7 +45,7 @@ const Login = () => {
             (user: { user_id: string }) => user.user_id === response.user_id
           );
           if (user && user.role === "Student") {
-            const createProfile = await postProfile({
+             await postProfile({
               sex: "",
               study_language: "",
               job_status: "",

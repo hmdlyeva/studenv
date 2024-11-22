@@ -2,27 +2,18 @@
 import { discussionCommunity } from "@/api/common";
 import DiscussionPost from "@/components/common/discussionPost";
 import Camera from "@/components/ui/Camera";
-import CommentIcon from "@/components/ui/CommentIcon";
 import FolderIcon from "@/components/ui/FolderIcon";
 import ImageIcon from "@/components/ui/ImageIcon";
-import LikedIcon from "@/components/ui/LikedIcon";
-import LikeIcon from "@/components/ui/LikeIcon";
 import LocationIcon from "@/components/ui/LocationIcon";
-import SavedIcon from "@/components/ui/SavedIcon";
-import SaveIcon from "@/components/ui/SaveIcon";
-import ShareIcon from "@/components/ui/ShareIcon";
-import ThreeDot from "@/components/ui/ThreeDot";
 import VideoIcon from "@/components/ui/VideoIcon";
 import { IDiscussion, IUser } from "@/types/common.type";
 import React, { useEffect, useRef, useState } from "react";
-interface IProps  {
+interface IProps {
   theme: string;
-  users:IUser[];
-  // discussions:IDiscussion[];
-  selectedCommunity:string
-};
+  users: IUser[];
+  selectedCommunity: string;
+}
 const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [isActive, setIsActive] = useState(false);
@@ -33,22 +24,6 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
   const [showMap, setShowMap] = useState(false);
   const [showYtInp, setShowYtInp] = useState(false);
   const [content, setContent] = useState("");
-
-  const [likePost, setLikePost] = useState(false);
-  const [savePost, setSavePost] = useState(false);
-
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", options)
-      .format(date)
-      .replace(",", "");
-  };
 
   const handleCameraAccess = async () => {
     if (isActive) {
@@ -141,24 +116,24 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
   const handleSubmit = async () => {
     if (content.trim() === "") return;
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-    const userId = userInfo.user_id;
+    // const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+    // const userId = userInfo.user_id;
 
-    const newDiscussion = {
-      topic: "Default Topic",
-      content: content,
-      tag: "Default Tag",
-      discussion_score: 0,
-      question: true,
-      answered: true,
-      user_id: userId,
-    };
+    // const newDiscussion = {
+    //   topic: "Default Topic",
+    //   content: content,
+    //   tag: "Default Tag",
+    //   discussion_score: 0,
+    //   question: true,
+    //   answered: true,
+    //   user_id: userId,
+    // };
 
     // await dispatch(postDisData(newDiscussion));
     setContent("");
   };
 
-  const [discussions, setDiscussions] = useState<IDiscussion[]>([])
+  const [discussions, setDiscussions] = useState<IDiscussion[]>([]);
   useEffect(() => {
     const fetchCommunityDiscussions = async () => {
       try {
@@ -175,7 +150,6 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
 
     fetchCommunityDiscussions();
   }, [selectedCommunity]);
-  
 
   return (
     <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto pt-32">
@@ -367,14 +341,20 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
 
       <div className="h-[77vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
         {discussions &&
-          discussions.map((post, i) => {
+          discussions.map((post, i: number) => {
             const userContent = users.find((us) => us.user_id === post.user_id);
 
             return (
-             <DiscussionPost post={post} userContent={userContent} theme={theme} users={users}/>
+              <div key={i}>
+                <DiscussionPost
+                  post={post}
+                  userContent={userContent}
+                  theme={theme}
+                  users={users}
+                />
+              </div>
             );
           })}
-
       </div>
     </div>
   );

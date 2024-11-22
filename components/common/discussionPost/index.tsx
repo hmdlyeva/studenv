@@ -19,7 +19,7 @@ import SavedIcon from "@/components/ui/SavedIcon";
 import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
-import { IComment, ICommunity, IDiscussion, IUser } from "@/types/common.type";
+import { IComment, IDiscussion, IUser } from "@/types/common.type";
 import React, { useEffect, useState } from "react";
 
 interface IProps {
@@ -42,7 +42,6 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
   const [contentByDiscussion, setContentByDiscussion] = useState<
     Record<string, string>
   >({});
-  const [savePost, setSavePost] = useState(false);
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       day: "numeric",
@@ -57,27 +56,27 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       .replace(",", "");
   };
   const handleDelete = async (id: string) => {
-    const resp = await deleteDiscussion(id);
+     await deleteDiscussion(id);
   };
   const handleLikeDiscussionActions = async (userId: string, disId: string) => {
     const isLiked = likedDiscussions.includes(disId);
     if (!isLiked) {
-      const resp = await userLikeDiscussion(userId, disId);
+       await userLikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchLikesCount(post.discussion_id);
     } else {
-      const resp = await userUnlikeDiscussion(userId, disId);
+       await userUnlikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => [...prev, disId]);
     }
   };
   const handleSaveDiscussionActions = async (userId: string, disId: string) => {
     const isSaved = savedDiscussions.includes(disId);
     if (!isSaved) {
-      const resp = await userSaveDiscussion(userId, disId);
+       await userSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchSavesCount(post.discussion_id);
     } else {
-      const resp = await userUnSaveDiscussion(userId, disId);
+       await userUnSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => [...prev, disId]);
     }
   };

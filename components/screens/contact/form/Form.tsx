@@ -1,9 +1,7 @@
 "use client"
 import React, { useState } from "react";
 
-type Props = {};
-
-const Form = (props: Props) => {
+const Form = () => {
   const [phone, setPhone] = useState("");
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {

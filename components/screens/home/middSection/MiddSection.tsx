@@ -1,8 +1,5 @@
 "use client";
-import {
-  postDiscussions,
-  upload,
-} from "@/api/common";
+import { postDiscussions, upload } from "@/api/common";
 import DiscussionPost from "@/components/common/discussionPost";
 import Camera from "@/components/ui/Camera";
 import FolderIcon from "@/components/ui/FolderIcon";
@@ -192,7 +189,6 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
     await postDiscussions(newDiscussion);
     setContent("");
   };
-
 
   return (
     <div className="middle flex flex-col gap-6 h-screen pb-8 overflow-y-auto scrollbar-none mx-auto px-4 lg:px-0 w-full">
@@ -384,12 +380,19 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
 
       <div className="h-[80vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
         {discussions &&
-          discussions.map((post: any, i) => {
+          discussions.map((post: IDiscussion, i: number) => {
             const userContent = users.find(
               (us: IUser) => us.user_id === post.user_id
             );
             return (
-              <DiscussionPost post={post} userContent={userContent} theme={theme} users={users}/>
+              <div key={i}>
+                <DiscussionPost
+                  post={post}
+                  userContent={userContent}
+                  theme={theme}
+                  users={users}
+                />
+              </div>
             );
           })}
       </div>

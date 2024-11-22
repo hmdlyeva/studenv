@@ -1,7 +1,5 @@
 import Arrow from "@/components/ui/Arrow";
 import DownArrow from "@/components/ui/DownArrow";
-import { User } from "@/redux/slice/auth/auth";
-import { Prfl } from "@/redux/slice/profile/profile";
 import { IProfile } from "@/types/common.type";
 import React from "react";
 

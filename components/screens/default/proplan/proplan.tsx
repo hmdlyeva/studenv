@@ -1,9 +1,7 @@
 import ConfirmIcon from "@/components/ui/ConfirmIcon";
 import React from "react";
 
-type Props = {};
-
-const Proplan = (props: Props) => {
+const Proplan = () => {
   return (
     <div className="flex flex-col justify-center items-center h-[100vh] container">
       <h2 className="text-5xl text-blue-500">What We Offer ?</h2>
