@@ -10,25 +10,17 @@ import { getUserData } from "@/redux/slice/auth/auth";
 // import { getDisData } from "@/redux/slice/discussion/discussion";
 import { getEventData } from "@/redux/slice/event/event";
 import { AppDispatch, RootState } from "@/redux/store/store";
+import { IDiscussion, IEvent, IUser } from "@/types/common.type";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-type Props = {
+interface IProps {
   theme: string;
+  users:IUser[];
+  events:IEvent[];
 };
 // const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-const MiddSection = ({ theme }: Props) => {
-  const user = useSelector((state: RootState) => state.users.users);
-  const event = useSelector((state: RootState) => state.events.events);
-  const dispatch: AppDispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getUserData());
-    dispatch(getEventData());
-  }, []);
-
-  // console.log(user)
-  console.log(event);
+const MiddSection = ({ theme, users, events }: IProps) => {
 
   const [likePost, setLikePost] = useState(false);
   const [savePost, setSavePost] = useState(false);
@@ -49,14 +41,14 @@ const MiddSection = ({ theme }: Props) => {
   return (
     <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto">
       <div className="h-[77vh] overflow-y-auto scrollbar-none grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {event &&
-          event.map((post, i) => {
-            const userContent = user.find((us) => us.user_id === post.user_id);
+        {events &&
+          events.map((post, i) => {
+            const userContent = users.find((us) => us.user_id === post.user_id);
 
             return (
               <div
                 key={i}
-                className={`post border rounded-2xl p-4 flex flex-col gap-6 ${
+                className={`post border rounded-2xl p-4 flex flex-col gap-4 h-96 ${
                   theme === "white" ? "bg-white" : "bg-black border-gray-600"
                 }`}
               >

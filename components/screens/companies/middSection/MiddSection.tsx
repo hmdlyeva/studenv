@@ -1,44 +1,17 @@
 "use client";
 import SaveIcon from "@/components/ui/SaveIcon";
-import {
-  getCompanyDataById,
-} from "@/redux/slice/companies/companies";
-import { AppDispatch, RootState } from "@/redux/store/store";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { ICompany } from "@/types/common.type";
+import React, {  useState } from "react";
 
 const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 type Props = {
   theme: string;
-  clickedCompany: string;
+  clickedCompany: ICompany | null;
 };
 
 const links = ["Şirkət haqqında", "Son iş elanları"];
 const MiddSection = ({ theme, clickedCompany }: Props) => {
-  const company = useSelector((state: RootState) => state.companies.company);
-  const dispatch: AppDispatch = useDispatch();
 
-  useEffect(() => {
-    if (clickedCompany) {
-      dispatch(getCompanyDataById(clickedCompany));
-    }
-  }, [clickedCompany, dispatch]);
-
-  // const [likePost, setLikePost] = useState(false);
-  // const [savePost, setSavePost] = useState(false);
-
-  // const formatDate = (dateString: string) => {
-  //   const options: Intl.DateTimeFormatOptions = {
-  //     day: "numeric",
-  //     month: "short",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //   };
-  //   const date = new Date(dateString);
-  //   return new Intl.DateTimeFormat("en-US", options)
-  //     .format(date)
-  //     .replace(",", "");
-  // };
 
   const [clickledBtn, setclickledBtn] = useState(0);
 
@@ -55,10 +28,10 @@ const MiddSection = ({ theme, clickedCompany }: Props) => {
               theme === "white" ? "text-black" : "text-white"
             }`}
           >
-            {company.company_name}
+            {clickedCompany?.company_name}
           </h1>
           <p className="text-sm text-gray-400 underline cursor-pointer">
-            {company.industry}
+            {clickedCompany?.industry}
           </p>
         </div>
 
@@ -96,7 +69,7 @@ const MiddSection = ({ theme, clickedCompany }: Props) => {
               >
                 Şirkət haqqında
               </h3>
-              <p className="text-sm text-gray-500">{company.description}</p>
+              <p className="text-sm text-gray-500">{clickedCompany?.description}</p>
 
               <div className="detail flex gap-8">
                 <div className="left w-1/2">

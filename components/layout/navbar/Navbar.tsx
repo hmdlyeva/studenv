@@ -6,23 +6,33 @@ import PlusIcon from "@/components/ui/PlusIcon";
 import ProfileIcon from "@/components/ui/ProfileIcon";
 import SearchIcon from "@/components/ui/SearchIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
-import { getUserData, User } from "@/redux/slice/auth/auth";
-import { AppDispatch, RootState } from "@/redux/store/store";
+import { IUser } from "@/types/common.type";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 
 const heroLinks = [
-  { title:"Explore", url:"/"},{ title:"My Community", url:"/mycommunity"},{ title:"Events", url:"/events"} ,{ title:"Companies", url:"/companies"},{ title:"Resouces", url:"/resources"} ,{ title:"Settings", url:"/profile"} ];
-type Props = {
+  { title: "Explore", url: "/" },
+  { title: "My Community", url: "/mycommunity" },
+  { title: "Events", url: "/events" },
+  { title: "Companies", url: "/companies" },
+  { title: "Resouces", url: "/resources" },
+  { title: "Settings", url: "/profile" },
+];
+const defaultLinks = [
+  { title: "Explore", url: "/" },
+  { title: "About Us", url: "/about" },
+  { title: "Contact us", url: "/contact" },
+];
+interface IProps {
   url: string;
-};
-const Navbar = ({ url }: Props) => {
+  users: IUser[];
+}
+const Navbar = ({ url, users }: IProps) => {
   const [channelModal, setchannelModal] = useState(false);
   const [userModal, setUserModal] = useState(false);
   // const [isActive, setIsActive] = useState(0);
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<IUser>();
   const router = useRouter();
   const [theme, setTheme] = useState("white");
 
@@ -39,7 +49,7 @@ const Navbar = ({ url }: Props) => {
     setTheme(newTheme);
   };
 
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const addChannelModal = () => {
     setchannelModal(!channelModal);
@@ -48,30 +58,22 @@ const Navbar = ({ url }: Props) => {
     setUserModal(!userModal);
   };
 
-  const handlelinkHover = (i: number, url:string) => {
-    // setIsActive(i);
-    router.push(url)
+  const handlelinkHover = (i: number, url: string) => {
+    if (url === "/profile") {
+      router.push(`/profile/${userData?.user_id}`);
+    } else {
+      router.push(url);
+    }
   };
 
-  const users = useSelector((state: RootState) => state.users.users);
-  const dispatch: AppDispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getUserData());
-  }, []);
 
   useEffect(() => {
     const confirmedEmail = localStorage.getItem("confirmEmail");
     if (confirmedEmail) {
-      console.log(confirmedEmail);
       const filteredUser = users.find((user) => user.email === confirmedEmail);
-      console.log(filteredUser);
       if (filteredUser) {
-        // const userData = dispatch(getUserDataById(filteredUser.user_id));
-        // if (userData) {
         setUserData(filteredUser);
         localStorage.setItem("userInfo", JSON.stringify(filteredUser));
-        // }
       }
     }
   }, [users]);
@@ -80,32 +82,57 @@ const Navbar = ({ url }: Props) => {
 
   return (
     <>
-      <div className={`up pt-4 pb-4 border-b-2 ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
-        <div className="container flex justify-between">
+      <div
+        className={`up fixed w-full pt-4 pb-4 z-10 ${
+          theme === "white" && userData
+            ? "bg-white border-b-2"
+            : theme === "black" && userData
+            ? "bg-dark border-gray-600 border-b-2"
+            : "bg-blue-500"
+        } ${theme === "white" && userData ? "text-black" : "text-white"}`}
+      >
+        <div className="container flex justify-between items-center">
           <div
-            className="logo flex gap-1 items-center cursor-pointer"
+            className={`logo flex items-center cursor-pointer ${userData ? "w-20 h-14 -m-2" : "w-14 h-14 p-2"} overflow-hidden m-0 bg-white rounded-full`}
             onClick={() => router.push("/")}
           >
-            <Image width={50} height={30} alt="logo" src={"/images/logo.png"} />
-            <h1 className="font-bold text-lg ">StudenV</h1>
-          </div>
-
-          <div className="sm:block hidden search_bar lg:flex relative w-1/2">
-            <div className="icon absolute top-4 left-3">
-              <SearchIcon />
-            </div>
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Search..."
-              className={`border-2 p-2 ps-10 rounded-lg w-full ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600"}`}
+            <img
+              alt="logo"
+              src={` ${userData ? "/images/logo.png" : "/images/minilogo.png"}`}
+              className={`object-cover ${userData ? "mt-1 ms-2": "-mt-1"}`}
             />
+            {/* <h1 className="font-bold text-lg ">StudenV</h1> */}
           </div>
+          {userData && (
+            <div className="sm:block hidden search_bar lg:flex relative w-1/2 scale-90">
+              <div className="icon absolute top-3 left-3">
+                <SearchIcon />
+              </div>
+              <input
+                type="text"
+                name=""
+                id=""
+                placeholder="Search..."
+                className={`border-2 p-2 ps-10 rounded-lg w-full ${
+                  theme === "white"
+                    ? "bg-whitesecond"
+                    : "bg-secondblack border-gray-600"
+                }`}
+              />
+            </div>
+          )}
+          {
+            !userData && <ul className="flex gap-14 text-2xl">
+              {
+                defaultLinks.map((link,i)=>(
+                  <li key={i} className="hover:cursor-pointer" onClick={()=>router.push(link.url)}>{link.title}</li>
+                ))
+              }
+            </ul>
+          }
 
           <div className="right flex gap-5 items-center">
-
-            <div className={`md:visible hidden language border p-1 rounded-3xl lg:flex gap-1 items-center cursor-pointer ${theme === "white" ? "bg-white": "bg-dark border-gray-600"}`}>
+            {/* <div className={`md:visible hidden language border p-1 rounded-3xl lg:flex gap-1 items-center cursor-pointer ${theme === "white" ? "bg-white": "bg-dark border-gray-600"}`}>
               <div className="">
                 <AzImg />
               </div>
@@ -113,22 +140,22 @@ const Navbar = ({ url }: Props) => {
               <div className="arrow ps-2">
                 <DownArrow />
               </div>
-            </div>
+            </div> */}
             {/* <div className="cursor-pointer">
               <ChatIcon />
             </div> */}
-            <div className="cursor-pointer md:block hidden">
+            {/* <div className="cursor-pointer md:block hidden">
               <Notification />
-            </div>
+            </div> */}
 
             {userData ? (
-              <div className="user flex gap-2 items-center relative">
-                <div className="text">{fullName}</div>
+              <div className="user flex gap-2 items-center relative z-10">
+                <div className="text-lg ">{fullName}</div>
                 <Image
                   alt="user_img"
                   src={"/images/hamida.jpg"}
-                  width={30}
-                  height={30}
+                  width={35}
+                  height={35}
                   className="rounded-lg"
                 />
                 <div
@@ -138,7 +165,13 @@ const Navbar = ({ url }: Props) => {
                   <DownArrow />
                 </div>
                 {userModal && (
-                  <div className={`cursor-pointer z-10 p-4 pr-1 absolute top-[50px] right-0 w-64 border rounded-xl flex flex-col gap-3 ${theme === "white" ? "bg-whitesecond": "bg-secondblack border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
+                  <div
+                    className={`cursor-pointer z-10 p-4 pr-1 absolute top-[50px] right-0 w-64 border rounded-xl flex flex-col gap-3 ${
+                      theme === "white"
+                        ? "bg-whitesecond"
+                        : "bg-secondblack border-gray-600"
+                    } ${theme === "white" ? "text-black" : "text-white"}`}
+                  >
                     <div
                       className="flex gap-4 items-center"
                       onClick={() => {
@@ -224,7 +257,7 @@ const Navbar = ({ url }: Props) => {
                     <div
                       className="flex gap-4 items-center"
                       onClick={() => {
-                        router.push("/profile");
+                        router.push(`/profile/${userData.user_id}`);
                       }}
                     >
                       <ProfileIcon />
@@ -235,7 +268,7 @@ const Navbar = ({ url }: Props) => {
                       className="flex gap-4 items-center"
                       onClick={() => {
                         localStorage.clear();
-                        router.push("/login");
+                        router.refresh();
                       }}
                     >
                       <svg
@@ -255,19 +288,30 @@ const Navbar = ({ url }: Props) => {
                 )}
               </div>
             ) : (
-              <div className="cursor-pointer">login</div>
+              <div
+                className="cursor-pointer border border-white rounded-lg py-1 px-10 hover:bg-white hover:text-blue-500"
+                onClick={() => {
+                  router.push("/login");
+                }}
+              >
+                login
+              </div>
             )}
-
           </div>
-
         </div>
       </div>
 
-      {url !== "profile" && (
-        <div className={`down pt-6 border-b-2 ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
+      {url !== "profile" && userData && (
+        <div
+          className={`down pt-6 border-b-2 fixed w-full mt-16 ${
+            theme === "white" ? "bg-white" : "bg-dark border-gray-600"
+          } ${theme === "white" ? "text-black" : "text-white"}`}
+        >
           <div className="container flex justify-between items-center">
             <div className="left flex gap-24 items-center w-full">
-              <h1 className="font-semibold text-3xl mt-[-20px] md:visible hidden">Community</h1>
+              <h1 className="font-semibold text-3xl mt-[-20px] md:visible hidden">
+                Community
+              </h1>
 
               <ul className="flex gap-6 text-[18px] font-medium max-w-[80%] overflow-x-auto scrollbar-none pe-4 me-6 md:ms-0 ms-4">
                 {heroLinks.map((link, i) => (
@@ -298,7 +342,11 @@ const Navbar = ({ url }: Props) => {
             >
               <ThreeDot />
               {channelModal && (
-                <div className={`p-4 pr-8 absolute top-6 right-0 w-48 border rounded-xl flex gap-2 items-center ${theme === "white" ? "bg-white": "bg-dark border-gray-600"} ${theme === "white" ? "text-black": "text-white"}`}>
+                <div
+                  className={`p-4 pr-8 absolute top-6 right-0 w-48 border rounded-xl flex gap-2 items-center ${
+                    theme === "white" ? "bg-white" : "bg-dark border-gray-600"
+                  } ${theme === "white" ? "text-black" : "text-white"}`}
+                >
                   <PlusIcon /> add channel
                 </div>
               )}

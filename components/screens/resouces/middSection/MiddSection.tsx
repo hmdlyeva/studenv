@@ -1,13 +1,12 @@
 "use client";
+import { getResourceTags } from "@/api/common";
 import Arrow from "@/components/ui/Arrow";
-import { getUserData } from "@/redux/slice/auth/auth";
-import { getResourceData } from "@/redux/slice/resource/resource";
-import { AppDispatch, RootState } from "@/redux/store/store";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-type Props = {
+import { IResource } from "@/types/common.type";
+import React, { useEffect, useState } from "react";
+interface IProps {
   theme: string;
-};
+  resources: IResource[];
+}
 const tags = [
   {
     title: "Safety & Security",
@@ -23,32 +22,30 @@ const tags = [
   },
 ];
 
-const MiddSection = ({ theme }: Props) => {
-  const resource = useSelector((state: RootState) => state.resources.resources);
-  const dispatch: AppDispatch = useDispatch();
+const MiddSection = ({ theme, resources }: IProps) => {
+  const [tagsData, setTagsData] = useState<Record<string, any[]>>({});
 
+  // Etiketleri her kaynak için al
   useEffect(() => {
-    dispatch(getUserData());
-    dispatch(getResourceData());
-  }, []);
+    const fetchTags = async () => {
+      const tagsMap: Record<string, any[]> = {};
 
-  // const formatDate = (dateString: string) => {
-  //   const options: Intl.DateTimeFormatOptions = {
-  //     day: "numeric",
-  //     month: "short",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //   };
-  //   const date = new Date(dateString);
-  //   return new Intl.DateTimeFormat("en-US", options)
-  //     .format(date)
-  //     .replace(",", "");
-  // };
+      await Promise.all(
+        resources.map(async (resource) => {
+          const tags = await getResourceTags(resource.id);
+          tagsMap[resource.id] = tags;
+        })
+      );
 
+      setTagsData(tagsMap);
+    };
+
+    fetchTags();
+  }, [resources]);
   return (
     <div className="middle w-full flex flex-col gap-6 h-full py-6">
       <div className="h-[80vh] w-[95%] mx-auto overflow-y-auto scrollbar-none flex flex-col gap-6">
-      {resource.map((p, i) => (
+        {resources.map((p, i) => (
           <div
             key={i}
             className={`post border rounded-2xl p-4 flex md:flex-row flex-col justify-between items-center ${
@@ -61,25 +58,19 @@ const MiddSection = ({ theme }: Props) => {
               {/* <div className="img w-14 h-12 rounded-lg bg-slate-400 cursor-pointer"></div> */}
               <div className="detail flex flex-col gap-2">
                 <p>GUIDE</p>
-                <h2 className="font-semibold text-2xl">
-                 {p.title}
-                </h2>
-                <p className="w-2/3">
-                  {p.description}
-                </p>
+                <h2 className="font-semibold text-2xl">{p.title}</h2>
+                <p className="w-2/3">{p.description}</p>
 
                 <p className="flex gap-2 items-center">
-                  TOPIC:{" "}
-                  <span className="text-blue-500">
-                    How Human Trafficking is Related to Healthcare
-                  </span>{" "}
+                  TOPIC: <span className="text-blue-500">{p.topic}</span>{" "}
                   <Arrow color="#3B82F6 " />
                 </p>
                 <div className="right flex gap-2 md:w-1/3 w-full md:hidden visible">
                   TAGS:
                   <div className="flex flex-col items-start">
-                    <p> {tags[i % 4].title}</p>
-                    <p>{tags[(i + 1) % 3].title}</p>
+                    {(tagsData[p.id] || []).map((tag, idx) => (
+                      <p key={idx}>{tag.name}</p>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -87,8 +78,9 @@ const MiddSection = ({ theme }: Props) => {
             <div className="right lg:flex gap-2 md:w-1/3 w-2/3  md:block hidden">
               TAGS:
               <div className="flex flex-col items-start">
-                <p> {tags[i % 4].title}</p>
-                <p>{tags[(i + 1) % 3].title}</p>
+                {(tagsData[p.id] || []).map((tag, idx) => (
+                  <p key={idx}>{tag.name}</p>
+                ))}
               </div>
             </div>
           </div>

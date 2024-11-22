@@ -1,0 +1,26 @@
+@import "/styles/main.module.scss";
+.success {
+  height: 100vh;
+  padding: 0px 16px;
+  @include flexBox(row, center, center);
+
+  .message__content {
+    width: 100%;
+    max-width: 480px;
+    @include flexBox(column);
+    text-align: center;
+
+    &--title {
+      @include typography(500, 24px, 32px, $brandGray-09);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    &--description {
+      color: $brandGray-07;
+      margin-bottom: 24px;
+      @include tablet {
+        margin-bottom: 20px;
+      }
+    }
+  }
+}

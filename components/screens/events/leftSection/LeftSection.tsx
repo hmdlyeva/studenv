@@ -1,10 +1,10 @@
 import React from "react";
 
 const eventData = [1, 2, 3, 4, 5, 6, 7, 8];
-type Props = {
+interface IProps {
   theme: string;
 };
-const LeftSection = ({ theme }: Props) => {
+const LeftSection = ({ theme }: IProps) => {
   return (
     <div className="left w-[95%] md:w-1/5 mx-auto flex flex-col">
       <div

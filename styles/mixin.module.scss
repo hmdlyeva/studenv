@@ -2,6 +2,7 @@ $screen-xl-desktop: 1400px;
 $screen-xxl-desktop: 1360px;
 $screen-lg-desktop: 1220px;
 $screen-md-desktop: 1024px;
+$screen-desktop: 992px;
 $screen-lg-tablet: 900px;
 $screen-tablet: 768px;
 $screen-mobile_lg: 610px;
@@ -33,6 +34,11 @@ $screen-lg-h: 990px;
     @content;
   }
 }
+@mixin desktop {
+  @media (max-width: #{$screen-desktop}) {
+    @content;
+  }
+}
 @mixin lg_tablet {
   @media (max-width: #{$screen-lg-tablet}) {
     @content;
@@ -45,7 +51,7 @@ $screen-lg-h: 990px;
   }
 }
 
-@mixin lg_mobile {
+@mixin mobile_lg {
   @media (max-width: #{$screen-mobile_lg}) {
     @content;
   }
@@ -73,7 +79,7 @@ $screen-lg-h: 990px;
 }
 
 //Typography
-@mixin typography($weight, $size, $line, $color) {
+@mixin typography($weight: 400, $size: 16px, $line: 24px, $color: black) {
   font-weight: $weight;
   font-size: $size;
   line-height: $line;

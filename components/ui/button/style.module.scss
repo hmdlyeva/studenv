@@ -1,0 +1,49 @@
+@import "/styles/main.module.scss";
+.btn {
+  padding: 0px 24px;
+  height: 48px;
+  border-radius: 100px;
+  @include flexBox(row, center, center);
+  gap: 8px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.primary {
+  background-color: $brandGray-07;
+  color: $light;
+  &:hover {
+    background-color: $brandGray-06;
+  }
+}
+
+.primaryOutline {
+  color: $brandGray-06;
+  background-color: $light;
+  border: 1px solid $brandGray-06;
+  &:hover {
+    background-color: $brandGray-01;
+  }
+}
+
+.primaryOutlineNone {
+  color: $brandGray-06;
+  &:hover {
+    color: $brandGray-07;
+  }
+}
+.secondary {
+  color: $brandGray-06;
+  &:hover {
+    color: $brandBlue-07;
+  }
+}
+
+.secondaryCircle {
+  border: 1px solid $brandGray-06;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: $light;
+}

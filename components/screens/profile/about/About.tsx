@@ -2,14 +2,14 @@ import Arrow from "@/components/ui/Arrow";
 import DownArrow from "@/components/ui/DownArrow";
 import { User } from "@/redux/slice/auth/auth";
 import { Prfl } from "@/redux/slice/profile/profile";
+import { IProfile } from "@/types/common.type";
 import React from "react";
 
 type Props = {
   theme:string;
-  userData:User | null;
-  profile:Prfl | null;
+  profile: IProfile;
 }
-const About = ({theme,userData, profile}:Props) => {
+const About = ({theme, profile}:Props) => {
   return (
     <div className={`about w-full flex md:flex-row flex-col gap-10 py-20 ${theme === "white" ? "text-black": "text-white"}`}>
       <div className={`left md:w-[55%] mx-auto w-[95%] rounded-xl flex flex-col justify-between p-8 ${theme === "white" ? "bg-white": "bg-black border-gray-600"}`}>
@@ -77,7 +77,7 @@ const About = ({theme,userData, profile}:Props) => {
 
         <h3 className="font-semibold text-lg mt-6">Email</h3>
         <div className="location flex items-center gap-3 my-2">
-          <p className="font-[600]">{userData?.email}</p>
+          <p className="font-[600]">{profile?.email}</p>
           <div className="-rotate-45">
             <Arrow />
           </div>

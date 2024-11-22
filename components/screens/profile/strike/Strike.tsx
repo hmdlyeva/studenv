@@ -2,7 +2,6 @@ import React from "react";
 
 
 const months = [
-  "May",
   "Jun",
   "Jul",
   "Aug",
@@ -14,6 +13,7 @@ const months = [
   "Feb",
   "Mar",
   "Apr",
+  "May",
 ];
 type Props = {
   theme:string;
@@ -26,7 +26,7 @@ const Strike = ({theme}:Props) => {
       <h2 className="font-semibold text-lg my-2 mb-8">1,390 strike in the last month</h2>
 
       <div className="strikes my-4">
-        <div className="months flex gap-4">
+        <div className="months flex gap-16">
           {months.map((m, i) => (
             <p key={i}>{m}</p>
           ))}

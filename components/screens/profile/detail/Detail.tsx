@@ -1,14 +1,12 @@
 import ProfileIcon from "@/components/ui/ProfileIcon";
 import Time from "@/components/ui/Time";
-import { User } from "@/redux/slice/auth/auth";
-import { Prfl } from "@/redux/slice/profile/profile";
+import { IProfile } from "@/types/common.type";
 import React from "react";
 type Props = {
   theme:string;
-  userData:User | null;
-  profile:Prfl | null;
+  profile:IProfile;
 }
-const Detail = ({theme, userData, profile}:Props) => {
+const Detail = ({theme, profile}:Props) => {
   return (
     <div className={`detail ${theme === "white" ? "text-black": "text-white"}`}>
       <div className="sections flex w-full items-center my-10 mt-16 gap-6">
@@ -55,7 +53,7 @@ const Detail = ({theme, userData, profile}:Props) => {
             />
             <div className="detail">
               <h1 className="font-semibold text-3xl leading-8">
-                {userData?.name}
+                {profile?.name}
               </h1>
               <p className="text-lg">{profile?.major}</p>
             </div>

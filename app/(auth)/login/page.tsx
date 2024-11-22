@@ -5,58 +5,19 @@ import * as Yup from "yup";
 import { login } from "@/api/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { getUsers, postProfile } from "@/api/common";
 
 const Login = () => {
   const [checked, setChecked] = useState(false);
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [displayedText, setDisplayedText] = useState("");
-const router = useRouter()
-  const texts = ["Student", "Environment", "Discussion", "Platform"];
-  useEffect(() => {
-    let typingTimeout: NodeJS.Timeout;
-    let textChangeTimeout: NodeJS.Timeout;
-
-    const typeText = (text: string) => {
-      let index = 0;
-      setDisplayedText("");
-
-      const typingInterval = setInterval(() => {
-        if (index < text.length) {
-          setDisplayedText((prev) => prev + text[index - 1]);
-          index++;
-        } else {
-          clearInterval(typingInterval);
-        }
-      }, 100);
-
-      return typingInterval;
-    };
-
-    const changeText = () => {
-      typingTimeout = setTimeout(() => {
-        setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
-      }, 3000);
-
-      textChangeTimeout = setTimeout(() => {
-        typeText(texts[currentTextIndex]);
-      }, 3000);
-    };
-
-    changeText();
-
-    return () => {
-      clearTimeout(typingTimeout);
-      clearTimeout(textChangeTimeout);
-    };
-  }, [currentTextIndex, texts]);
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      username: "",
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
+      username: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
       password: Yup.string()
@@ -64,22 +25,46 @@ const router = useRouter()
         .required("Password is required"),
     }),
     onSubmit: async (values) => {
-      console.log("Form data:", values);
+
       try {
         const data = {
           ...values,
+          grant_type: "password",
+          scope: "scope",
+          client_id: "string",
+          client_secret: "string",
         };
-        console.log(data)
         const response = await login(data);
-        if (response) {
+        if (response.user_id) {
           if (typeof window !== "undefined") {
             localStorage.setItem("accessToken", response.access_token);
-            localStorage.setItem("confirmEmail", values.email);
+            localStorage.setItem("confirmEmail", values.username);
           }
 
-          router.push("/")
+          const usersData = await getUsers();
+          const user = usersData.find(
+            (user: { user_id: string }) => user.user_id === response.user_id
+          );
+          if (user && user.role === "Student") {
+            const createProfile = await postProfile({
+              sex: "",
+              study_language: "",
+              job_status: "",
+              university: "",
+              year_of_study: "",
+              date_of_birth: "",
+              bio: "",
+              score: 0,
+              phone_number: "",
+              profile_photo: "",
+              cv_url: "",
+              address: "",
+              social_links: "",
+              user_id: response.user_id,
+            });
+            router.push("/");
+          }
         }
-        console.log("Login successful");
       } catch (error) {
         console.error("Login failed", error);
       }
@@ -88,29 +73,21 @@ const router = useRouter()
 
   return (
     <div className="register bg-[#f9f9f9] h-screen flex items-center justify-center">
-      <div className="w-2/3 flex justify-center items-center h-3/4">
-        <div className="bg-white rounded-3xl w-full h-full p-5 m-auto flex gap-8">
-        <div className="bg-blue-600 h-full w-1/2 rounded-2xl text-white text-6xl text-center flex flex-col items-center">
-            <div className="logo flex gap-1 items-center mt-[10%]">
-              <Image
-                width={200}
-                height={200}
-                alt="logo"
-                src={"/images/logo.png"}
-              />
-            </div>
-            <p className="mt-[10%]">{displayedText}</p>
-          </div>
-          
-          <div className="left h-full w-1/2 p-[3%] relative">
-            <p className="font-bold text-8xl rotate-45 w-1 h-14 flex absolute right-16 top-0">&quot;</p>
-            <h1 className="text-3xl font-medium pt-2">Get Started Now</h1>
-            <p className="font-medium py-1">
+      <div className="sm:w-2/3 w-screen flex justify-center items-center sm:h-3/4 h-screen">
+        <div className="bg-white rounded-3xl w-full h-full sm:p-5 p-10 m-auto flex gap-8">
+          <div className="bg-blue-600 lg:block hidden h-full w-1/2 rounded-2xl text-white text-6xl text-center "></div>
+
+          <div className="left h-full lg:w-1/2 w-full relative">
+            <p className="font-bold text-8xl rotate-45 w-1 h-14 flex absolute xl:right-14 sm:right-8 right-2 -top-1 px-3">
+              &quot;
+            </p>
+            <h1 className="text-3xl font-medium pt-2 px-3">Get Started Now</h1>
+            <p className="font-medium py-1 px-3">
               Enter your credentials to access your account
             </p>
 
-            <div className="auth_btns flex justify-center gap-4 py-5">
-              <button className="flex justify-center gap-3 items-center border w-3/5 p-2 border-gray-100 rounded-2xl">
+            <div className="flex justify-center gap-4 py-5 px-3 text-sm flex-col md:flex-row lg:flex-col xl:flex-row">
+              <button className="flex justify-center gap-3 items-center border xl:w-3/5 w-full p-2 border-gray-100 rounded-2xl">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   x="0px"
@@ -138,7 +115,7 @@ const router = useRouter()
                 </svg>{" "}
                 Login with Google
               </button>
-              <button className="flex justify-center gap-3 items-center border w-3/5 p-2 border-gray-100 rounded-2xl">
+              <button className="flex justify-center gap-3 items-center border xl:w-3/5 w-full p-2 border-gray-100 rounded-2xl">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="52 42 88 66"
@@ -173,16 +150,15 @@ const router = useRouter()
               onSubmit={formik.handleSubmit}
               className="flex flex-col gap-4 pt-4"
             >
-
-              <div className="flex flex-col gap-1">
-                <label htmlFor="email">Email</label>
+              <div className="flex flex-col gap-1 px-3">
+                <label htmlFor="username">Email</label>
                 <input
-                  id="email"
-                  name="email"
+                  id="username"
+                  name="username"
                   type="email"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.email}
+                  value={formik.values.username}
                   className="cursor-pointer border p-2 pl-3 rounded-xl w-full focus:outline-none focus:ring-0 focus:border-blue-500"
                   placeholder="Email"
                 />
@@ -191,7 +167,7 @@ const router = useRouter()
           ) : null} */}
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 px-3">
                 <label htmlFor="password">Password</label>
                 <input
                   id="password"
@@ -208,7 +184,7 @@ const router = useRouter()
           ) : null} */}
               </div>
 
-              <div className="flex gap-2 cursor-pointer font-medium">
+              <div className="flex gap-2 cursor-pointer font-medium px-3">
                 <input
                   checked={checked}
                   onChange={(e) => setChecked(e.target.checked)}
@@ -226,21 +202,25 @@ const router = useRouter()
                 </p>
               </div>
 
-              <button
-                className="bg-blue-600 hover:bg-blue-800 p-2 mt-3 text-white rounded-xl"
-                type="submit"
-              >
-                Login
-              </button>
-              <div className="flex gap-1">
-                <span>Don&apos;t have an account ?</span>
-                <span className="text-blue-600 cursor-pointer hover:text-blue-800" onClick={()=> router.push("/register")}>
-                  Sign up
-                </span>
+              <div className="w-full absolute sm:bottom-5 bottom-10 flex flex-col gap-3">
+                <button
+                  className="bg-blue-600 hover:bg-blue-800 p-2 mt-3 text-white rounded-xl w-full"
+                  type="submit"
+                >
+                  Login
+                </button>
+                <div className="flex gap-1">
+                  <span>Don&apos;t have an account ?</span>
+                  <span
+                    className="text-blue-600 cursor-pointer hover:text-blue-800"
+                    onClick={() => router.push("/register")}
+                  >
+                    Sign up
+                  </span>
+                </div>
               </div>
             </form>
           </div>
-          
         </div>
       </div>
     </div>

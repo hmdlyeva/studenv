@@ -61,7 +61,7 @@ const FilterSection = ({theme}:Props) => {
           <SearchIcon />
         </div>
         <p className="w-2/5 md:block hidden">
-          Your search for <strong>&quot;Human Trafficking&quot;</strong> returns 180
+          Your search for <strong>&quot;Human Trafficking&quot;</strong> returns 0
           results
         </p>
       </div>

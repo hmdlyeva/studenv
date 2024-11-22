@@ -1,27 +1,38 @@
+import { ICommunityPopular, IEvent } from "@/types/common.type";
 import React from "react";
 
-const channelData = [1, 2, 3, 4];
-const eventData = [1, 2, 3];
-type Props = {
+interface IProps {
   theme:string;
+  communitiesPopular:ICommunityPopular[];
+  latestEvents: IEvent[];
 }
-const LeftSection = ({theme}:Props) => {
+const LeftSection = ({theme, communitiesPopular, latestEvents}:IProps) => {
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  };
   return (
     <div className="left w-1/4 lg:flex flex-col gap-6 md:visible hidden">
       <div className={`card border rounded-2xl ${theme === "white" ? "bg-white": "bg-dark border-gray-600"}`}>
         <h1 className={`font-semibold p-4 ${theme === "white" ? "text-black": "text-white"}`}>Popular Community</h1>
         <div className={`${theme === "white" ? "bg-gray-300 h-[1px]": "bg-gray-600 h-[1px]"}`}/>
         <div className="channels pt-2 pb-2">
-          {channelData.map((chanel, i) => (
+          {communitiesPopular?.map((chanel, i) => (
             <div
               key={i}
-              className="channel p-4 flex flex-col gap-3 md:flex-row cursor-pointer"
+              className="channel p-4 flex flex-col gap-3 md:flex-row cursor-pointer w-full items-center hover:bg-[#f9f9f9]"
             >
-              <div className="img bg-slate-300 rounded-md w-16 h-16"></div>
-              <div className="detail">
-                <p className="text-[10px] text-gray-400">PRIVATE COMMUNITY</p>
-                <h3 className={`"text-sm" ${theme === "white" ? "text-black": "text-white"}`}>Designer Pemula</h3>
-                <p className="text-sm text-gray-400 pt-2">48 Member</p>
+              <div className="img bg-slate-300 rounded-md w-1/3 h-16 overflow-hidden">
+              <img src={chanel.img_url} alt="" className="object-cover w-full h-full"/></div>
+              <div className="detail w-2/3 mt-2">
+                <p className="text-[10px] text-gray-400 leading-3 -mt-1 truncate">{chanel.description}</p>
+                <h3 className={`"text-sm truncate leading-[15px] pt-1 " ${theme === "white" ? "text-black": "text-white"}`}>{chanel.name}</h3>
+                <p className="text-sm text-gray-400 pt-3">{chanel.member_count} Member</p>
               </div>
             </div>
           ))}
@@ -35,14 +46,16 @@ const LeftSection = ({theme}:Props) => {
       <h1 className={`font-semibold p-4 ${theme === "white" ? "text-black": "text-white"}`}>Latest Event</h1>
       <div className={`${theme === "white" ? "bg-gray-300 h-[1px]": "bg-gray-600 h-[1px]"}`}/>
         <div className="events pt-2 pb-2 ">
-          {eventData.map((event, i) => (
-            <div key={i} className="event p-4 flex flex-col gap-3 md:flex-row cursor-pointer">
-              <div className="img bg-slate-300 rounded-md w-16 h-16"></div>
+          {latestEvents?.map((event, i) => (
+            <div key={i} className="event p-4 flex flex-col gap-3 md:flex-row cursor-pointer hover:bg-[#f9f9f9]">
+              <div className="img bg-slate-300 rounded-md w-16 h-16 overflow-hidden">
+                <img src={event.img_url} alt="" className="object-cover w-full h-full"/>
+              </div>
               <div className="detail">
-                <p className="text-[10px] text-gray-400">19 DECEMBER 2022</p>
-                <h3 className={`"text-sm" ${theme === "white" ? "text-black": "text-white"}`}>We The Fest (NEW)</h3>
+                <p className="text-[10px] text-gray-400">{formatDate(event.date_of_created)}</p>
+                <h3 className={`"text-sm" ${theme === "white" ? "text-black": "text-white"}`}>{event.title}</h3>
                 <p className="text-sm text-gray-400 pt-2">
-                  912 People has join this event
+                  {event.description}
                 </p>
               </div>
             </div>

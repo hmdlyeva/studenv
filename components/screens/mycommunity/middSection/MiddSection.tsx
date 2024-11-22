@@ -1,4 +1,6 @@
 "use client";
+import { discussionCommunity } from "@/api/common";
+import DiscussionPost from "@/components/common/discussionPost";
 import Camera from "@/components/ui/Camera";
 import CommentIcon from "@/components/ui/CommentIcon";
 import FolderIcon from "@/components/ui/FolderIcon";
@@ -11,28 +13,15 @@ import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
 import VideoIcon from "@/components/ui/VideoIcon";
-import { getUserData } from "@/redux/slice/auth/auth";
-import { getDisData, postDisData } from "@/redux/slice/discussion/discussion";
-import { AppDispatch, RootState } from "@/redux/store/store";
+import { IDiscussion, IUser } from "@/types/common.type";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-type Props = {
+interface IProps  {
   theme: string;
+  users:IUser[];
+  // discussions:IDiscussion[];
+  selectedCommunity:string
 };
-const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-const MiddSection = ({ theme }: Props) => {
-  const user = useSelector((state: RootState) => state.users.users);
-  const dis = useSelector((state: RootState) => state.diss.diss);
-  const dispatch: AppDispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getUserData());
-    dispatch(getDisData());
-  }, []);
-
-  // console.log(user)
-  console.log(dis);
+const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
@@ -165,19 +154,44 @@ const MiddSection = ({ theme }: Props) => {
       user_id: userId,
     };
 
-    await dispatch(postDisData(newDiscussion));
+    // await dispatch(postDisData(newDiscussion));
     setContent("");
   };
 
+  const [discussions, setDiscussions] = useState<IDiscussion[]>([])
+  useEffect(() => {
+    const fetchCommunityDiscussions = async () => {
+      try {
+        const selectedCommunityDiscussions = await discussionCommunity(
+          selectedCommunity
+        );
+        if (selectedCommunityDiscussions) {
+          setDiscussions(selectedCommunityDiscussions);
+        }
+      } catch (error) {
+        console.error("Topluluk tartışmaları alınırken hata oluştu:", error);
+      }
+    };
+
+    fetchCommunityDiscussions();
+  }, [selectedCommunity]);
+  
+
   return (
-    <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto">
+    <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto pt-32">
       <div
         className={`card p-4 border rounded-2xl ${
           theme === "white" ? "bg-white" : "bg-dark border-gray-600"
         } ${theme === "white" ? "text-black" : "text-white"}`}
       >
-        <div className="up flex gap-4 items-center">
-          <div className="img w-10 h-10 rounded-lg bg-slate-400 cursor-pointer"></div>
+        <div className="up flex gap-2 items-center">
+          <div className="img w-12 h-10 rounded-lg bg-slate-400 cursor-pointer overflow-hidden">
+            <img
+              src={"/images/hamida.jpg"}
+              alt=""
+              className="object-cover w-full h-full"
+            />
+          </div>
           <input
             type="text"
             name=""
@@ -193,13 +207,13 @@ const MiddSection = ({ theme }: Props) => {
           />
           <button
             onClick={handleSubmit}
-            className={`border-2 p-2 rounded-lg ${
+            className={`border-2 p-[13px] rounded-lg ${
               theme === "white"
-                ? "bg-whitesecond"
+                ? "bg-whitesecond hover:bg-gray-200"
                 : "bg-secondblack border-gray-600 text-white"
             }`}
           >
-            add
+            <img src="/images/icons/sendmsg.svg" alt="" />
           </button>
         </div>
         <div className="icons pt-2 pb-2">
@@ -218,19 +232,19 @@ const MiddSection = ({ theme }: Props) => {
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleImageClick}
             >
-              <ImageIcon /> Images
+              <ImageIcon /> Image
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleVideoClick}
             >
-              <VideoIcon /> Videos
+              <VideoIcon /> Video
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handlePdfClick}
             >
-              <FolderIcon /> Files
+              <FolderIcon /> File
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
@@ -246,7 +260,8 @@ const MiddSection = ({ theme }: Props) => {
                 ref={videoRef}
                 style={{
                   width: "100%",
-                  height: "auto",
+                  margin: "auto",
+                  height: "400px",
                   borderRadius: 20,
                   marginTop: 10,
                 }}
@@ -265,11 +280,14 @@ const MiddSection = ({ theme }: Props) => {
             onChange={handleImageChange}
           />
           {selectedImage && (
-            <div className="image-preview mt-4" onClick={handleImageClick}>
+            <div
+              className="image-preview mt-4 w-[95%] mx-auto"
+              onClick={handleImageClick}
+            >
               <img
                 src={selectedImage}
                 alt="Selected"
-                className="w-full h-auto rounded-2xl cursor-pointer"
+                className="object-cover h-[400px] w-full rounded-2xl cursor-pointer"
               />
             </div>
           )}
@@ -283,7 +301,7 @@ const MiddSection = ({ theme }: Props) => {
           />
           {videoSource && (
             <div className="video-preview mt-4">
-              <video controls className="w-full h-auto rounded-2xl">
+              <video controls className="w-[95%] mx-auto h-[400px] rounded-2xl">
                 <source src={videoSource} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -348,146 +366,15 @@ const MiddSection = ({ theme }: Props) => {
       </div>
 
       <div className="h-[77vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
-        {dis &&
-          dis.map((post, i) => {
-            const userContent = user.find((us) => us.user_id === post.user_id);
+        {discussions &&
+          discussions.map((post, i) => {
+            const userContent = users.find((us) => us.user_id === post.user_id);
 
             return (
-              <div
-                key={i}
-                className={`post border rounded-2xl p-4 flex flex-col gap-6 ${
-                  theme === "white" ? "bg-white" : "bg-dark border-gray-600"
-                }`}
-              >
-                <div className="post_hero flex justify-between">
-                  <div className="left flex gap-4">
-                    <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
-                    <div className="detail flex flex-col justify-between">
-                      <h1
-                        className={`text-xl font-medium ${
-                          theme === "white" ? "text-black" : "text-white"
-                        }`}
-                      >
-                        {post.topic}
-                      </h1>
-                      <div className="user flex gap-2 items-center">
-                        <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                        <p className="text-blue-600 cursor-pointer">
-                          {userContent ? userContent.name : "Unknown User"}
-                        </p>
-                        <p className="text-sm text-gray-400">
-                          | Just {formatDate(post.date_of_created)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="rotate-90 pr-10 cursor-pointer">
-                    <ThreeDot />
-                  </div>
-                </div>
-                <h1
-                  className={`${
-                    theme === "white" ? "text-black" : "text-white"
-                  }`}
-                >
-                  {post.content}
-                </h1>
-                <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
-                  <li>#{post.tag}</li>
-                </ul>
-                <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div>
-                <div className="post_footer flex justify-between text-gray-500">
-                  <ul className="flex gap-2 md:gap-8">
-                    <li
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => setLikePost(!likePost)}
-                    >
-                      {likePost ? <LikedIcon /> : <LikeIcon />}
-                      Like
-                    </li>
-                    <li className="flex items-center gap-2 cursor-pointer">
-                      <CommentIcon /> Comment
-                    </li>
-                    <li
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => setSavePost(!savePost)}
-                    >
-                      {savePost ? <SavedIcon /> : <SaveIcon />}
-                      Save
-                    </li>
-                  </ul>
-                  <p className="flex items-center gap-2 cursor-pointer">
-                    <ShareIcon /> Share
-                  </p>
-                </div>
-              </div>
+             <DiscussionPost post={post} userContent={userContent} theme={theme} users={users}/>
             );
           })}
 
-        {postData.map((p, i) => (
-          <div
-            key={i}
-            className={`"post border rounded-2xl p-4 flex flex-col gap-6" ${
-              theme === "white" ? "bg-white" : "bg-black border-gray-600"
-            }`}
-          >
-            <div className="post_hero flex justify-between">
-              <div className="left flex gap-4">
-                <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer"></div>
-                <div className="detail flex flex-col justify-between">
-                  <h1
-                    className={`text-xl font-medium ${
-                      theme === "white" ? "text-black" : "text-white"
-                    }`}
-                  >
-                    topic
-                  </h1>
-                  <div className="user flex gap-2 items-center">
-                    <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer"></div>
-                    <p className="text-blue-600 cursor-pointer">Unknown User</p>
-                    <p className="text-sm text-gray-400">| Just Now</p>
-                  </div>
-                </div>
-              </div>
-              <div className="rotate-90 pr-10 cursor-pointer">
-                <ThreeDot />
-              </div>
-            </div>
-            <h1
-              className={`${theme === "white" ? "text-black" : "text-white"}`}
-            >
-              content texti
-            </h1>
-            <ul className="text-gray-500 flex gap-8 lg:gap-5 md:gap-3 sm:gap-2">
-              <li>#tags</li>
-            </ul>
-            {/* <div className="img w-full h-[600px] rounded-lg bg-slate-400"></div> */}
-            <div className="post_footer flex justify-between text-gray-500">
-              <ul className="flex gap-2 md:gap-8">
-                <li
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => setLikePost(!likePost)}
-                >
-                  {likePost ? <LikedIcon /> : <LikeIcon />}
-                  Like
-                </li>
-                <li className="flex items-center gap-2 cursor-pointer">
-                  <CommentIcon /> Comment
-                </li>
-                <li
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSavePost(!savePost)}
-                >
-                  {savePost ? <SavedIcon /> : <SaveIcon />}
-                  Save
-                </li>
-              </ul>
-              <p className="flex items-center gap-2 cursor-pointer">
-                <ShareIcon /> Share
-              </p>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
