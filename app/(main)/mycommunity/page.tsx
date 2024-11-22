@@ -43,7 +43,6 @@ const MyCommunityContainer = dynamic(() => import("@/container/myCommunityContai
 export default async function Home() {
   const usersDataPromise = await getUsers();
   const communitiesDataPromise = await getCommunities();
-  const eventsDataPromise = await getEvents();
   const discussionsDataPromise = await getDiscussions();
   const [users, communities, discussions] = await Promise.all([usersDataPromise,communitiesDataPromise, discussionsDataPromise]) 
   return (
