@@ -20,7 +20,7 @@ const PrivacyPolicyContainer = (props: Props) => {
               1. <strong>Introduction</strong>
               <p>This Privacy and Terms Policy outlines the rules
               for the collection, use, and protection of user data in the
-              StudentV project. Our goal is to provide a secure and transparent
+              StudenV project. Our goal is to provide a secure and transparent
               service while safeguarding users' personal information.</p>
               
             </li>
@@ -74,8 +74,8 @@ const PrivacyPolicyContainer = (props: Props) => {
               contact us:</p>
             </li>
             <li>
-              <strong>Email</strong>: info@studentv.az 
-              <p>Thank you for trusting the StudentV project. We are committed to protecting your privacy rights!</p>
+              <strong>Email</strong>: info@studenv.az 
+              <p>Thank you for trusting the StudenV project. We are committed to protecting your privacy rights!</p>
             </li>
           </ul>
         </div>

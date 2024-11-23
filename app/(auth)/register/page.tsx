@@ -9,8 +9,10 @@ import {
   registerGuest,
   registerStudent,
   verifyOtp,
+  verifyOtpResend,
 } from "@/api/auth";
 import CustomSelect from "@/components/common/customSelect";
+import Link from "next/link";
 
 const specialities: string[] = [
   "Aviasiya istehsalatının təşkili mühəndisliyi",
@@ -196,6 +198,8 @@ const Register = () => {
   const [confirmEmail, setConfirmEmail] = useState<string>("");
   const [role, setRole] = useState("");
   const [selectedSpeciality, setSelectedSpeciality] = useState("");
+  const [errorRegister, setErrorRegister] = useState("");
+  const [notVerifyed, setNotVerifyed] = useState(false);
 
   const roles = ["Student", "Company", "Guest"];
 
@@ -204,11 +208,14 @@ const Register = () => {
       name: "",
       email: "",
       password: "",
-      speciality: ""
+      speciality: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
-      speciality: role === "Student" ? Yup.string().required("Speciality is required") : Yup.string(),
+      speciality:
+        role === "Student"
+          ? Yup.string().required("Speciality is required")
+          : Yup.string(),
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
@@ -217,42 +224,71 @@ const Register = () => {
         .required("Password is required"),
     }),
     onSubmit: async (values) => {
-      try {
-        const data = {
-          ...values,
-          role: role ? role : "",
-        };
-        const studentData = {
-          ...values,
-          role: "Student",
-          speciality: selectedSpeciality ? selectedSpeciality : "",
-        };
+      if (checked) {
+        setErrorRegister("");
+        try {
+          const data = {
+            ...values,
+            role: role ? role : "",
+          };
+          const studentData = {
+            ...values,
+            role: "Student",
+            speciality: selectedSpeciality ? selectedSpeciality : "",
+          };
 
-        
-        let response;
-        switch (role) {
-          case "Student":
-            response = await registerStudent(studentData);
-            break;
-          case "Company":
-            response = await registerCompany(data);
-            break;
-          case "Guest":
-            response = await registerGuest(data);
-            break;
-          default:
-            throw new Error("Invalid role");
-        }
-
-        if (response) {
-          if (typeof window !== "undefined") {
-            localStorage.setItem("confirmEmail", values.email);
+          let response;
+          switch (role) {
+            case "Student":
+              response = await registerStudent(studentData);
+              break;
+            case "Company":
+              response = await registerCompany(data);
+              break;
+            case "Guest":
+              response = await registerGuest(data);
+              break;
+            default:
+              throw new Error("Invalid role");
           }
-          setConfirmEmail(values.email);
-          setIsModalOpen(true);
+
+          if (response?.status === 200) {
+            if (typeof window !== "undefined") {
+              localStorage.setItem("confirmEmail", values.email);
+            }
+            setConfirmEmail(values.email);
+            setIsModalOpen(true);
+          }
+
+          // bunu sonradan response.status === 403 et
+          else if (
+            response &&
+            response.response.data.detail ===
+              "Email already registered but not verified. Check your email."
+          ) {
+            setErrorRegister(response.response.data.detail);
+            setConfirmEmail(values.email);
+            setNotVerifyed(true);
+          } else if (response && response?.status !== 200) {
+            setErrorRegister(response.response.data.detail);
+          } else {
+            setErrorRegister("Something went wrong. Please try later");
+          }
+        } catch (error: any) {
+          console.error("Registration failed", error);
+          if (error.response?.data?.detail) {
+            setErrorRegister(error.response?.data?.detail);
+            setIsModalOpen(false);
+          } else if (!error.response) {
+            setErrorRegister("Network error or no response from the server.");
+          } else {
+            setErrorRegister("An unexpected error occurred.");
+          }
         }
-      } catch (error) {
-        console.error("Registration failed", error);
+      } else {
+        setErrorRegister(
+          "Please Confirm our Terms & Privacy Policy conditions"
+        );
       }
     },
   });
@@ -290,8 +326,10 @@ const Register = () => {
     const result = await verifyOtp(confirmEmail, otpString);
     setLoading(false);
 
-    if (result) {
+    if (result?.status === 200) {
       router.push("/login");
+    } else if (result.status !== 200) {
+      setError(result.response.data.detail);
     } else {
       console.log("Error");
     }
@@ -299,25 +337,39 @@ const Register = () => {
 
   useEffect(() => {
     const body = document.body;
-    if (body.hasAttribute('cz-shortcut-listen')) {
-      body.removeAttribute('cz-shortcut-listen');
+    if (body.hasAttribute("cz-shortcut-listen")) {
+      body.removeAttribute("cz-shortcut-listen");
     }
   }, []);
+
+  const handleVerify = async () => {
+    setErrorRegister("")
+    setError(null)
+    setOtpCode(["", "", "", "", "", ""])
+    const response = await verifyOtpResend(confirmEmail);
+    if (response?.status === 200) {
+      setIsModalOpen(true);
+    }
+    else{
+      setErrorRegister("Something went wrong. Please try later")
+      setNotVerifyed(true)
+    }
+  }
 
   return (
     <div
       className={` ${
         role ? "bg-[#f9f9f9]" : "bg-white"
-      } "register h-screen flex items-center justify-center" `}
+      } "register h-full min-h-screen flex items-center justify-center" `}
     >
       {role ? (
         <div
-          className={`sm:w-2/3 mx-auto w-screen flex justify-center items-center ${
-            role === "Student" ? "sm:h-[82%] md:h-5/6" : "sm:h-[82%] md:h-3/4"
+          className={`md:w-2/3 mx-auto w-screen flex justify-center items-center ${
+            role === "Student" ? "md:h-[82%] lg:h-[80%]" : "md:h-[82%] lg:h-3/4"
           }  h-screen`}
         >
-          <div className="bg-white rounded-3xl w-full h-full sm:p-5 p-10 m-auto flex gap-8">
-            <div className="left h-full lg:w-1/2 w-full relative pt-20">
+          <div className="bg-white sm:rounded-3xl rounded-none w-full h-auto sm:p-5 p-10 m-auto flex gap-8">
+            <div className="left h-full lg:w-1/2 w-full pt-20 relative">
               <p className="font-bold text-8xl -rotate-45 w-1 h-14 flex absolute xl:left-6 sm:left-2 -left-4 sm:top-1 -top-2 px-3">
                 &quot;
               </p>
@@ -328,7 +380,13 @@ const Register = () => {
                 Enter your credentials to create your account
               </p>
 
-              <div className="flex justify-center gap-4 py-5 px-3 text-sm flex-col md:flex-row lg:flex-col xl:flex-row">
+              <div
+                className={`flex justify-center gap-4 py-5 px-3 text-sm ${
+                  role === "Student"
+                    ? "flex-row md:flex-row xl:flex-row"
+                    : "flex-col md:flex-row lg:flex-row xl:flex-row"
+                }`}
+              >
                 <button className="flex justify-center gap-3 items-center border xl:w-3/5 w-full p-2 border-gray-100 rounded-2xl">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -354,8 +412,13 @@ const Register = () => {
                       fill="#1976D2"
                       d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
                     ></path>
-                  </svg>{" "}
-                  Login with Google
+                  </svg>
+                  <p className="xl:hidden lg:block md:hidden sm:hidden block">
+                    Google
+                  </p>
+                  <p className="xl:block lg:hidden md:block sm:block hidden">
+                    Login with Google
+                  </p>
                 </button>
                 <button className="flex justify-center gap-3 items-center border xl:w-3/5 w-full p-2 border-gray-100 rounded-2xl">
                   <svg
@@ -381,8 +444,13 @@ const Register = () => {
                       fill="#c5221f"
                       d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"
                     />
-                  </svg>{" "}
-                  Login with Email
+                  </svg>
+                  <p className="xl:hidden lg:block md:hidden sm:hidden block">
+                    Email
+                  </p>
+                  <p className="xl:block lg:hidden md:block sm:block hidden">
+                    Login with Email
+                  </p>
                 </button>
               </div>
 
@@ -390,9 +458,14 @@ const Register = () => {
 
               <form
                 onSubmit={formik.handleSubmit}
-                className="flex flex-col gap-4 pt-4"
+                className="flex flex-col gap-4 pt-4 h-auto overflow-y-auto"
+                style={{
+                  overflowY: "auto",
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                }}
               >
-                <div className="flex flex-col gap-1 px-3">
+                <div className="flex flex-col gap-1 sm:px-3">
                   <label htmlFor="name">Name</label>
                   <input
                     id="name"
@@ -404,12 +477,12 @@ const Register = () => {
                     className="cursor-pointer border p-2 pl-3 rounded-xl w-full focus:outline-none focus:ring-0 focus:border-blue-500"
                     placeholder="Full name"
                   />
-                  {/* {formik.touched.name && formik.errors.name ? (
-            <div>{formik.errors.name}</div>
-          ) : null} */}
+                  {formik.touched.name && formik.errors.name ? (
+                    <div className="text-red-500">{formik.errors.name}</div>
+                  ) : null}
                 </div>
 
-                <div className="flex flex-col gap-1 px-3">
+                <div className="flex flex-col gap-1 sm:px-3">
                   <label htmlFor="email">Email</label>
                   <input
                     id="email"
@@ -421,9 +494,9 @@ const Register = () => {
                     className="cursor-pointer border p-2 pl-3 rounded-xl w-full focus:outline-none focus:ring-0 focus:border-blue-500"
                     placeholder="Email"
                   />
-                  {/* {formik.touched.email && formik.errors.email ? (
-            <div>{formik.errors.email}</div>
-          ) : null} */}
+                  {formik.touched.email && formik.errors.email ? (
+                    <div className="text-red-500">{formik.errors.email}</div>
+                  ) : null}
                 </div>
 
                 {role === "Student" && (
@@ -433,14 +506,14 @@ const Register = () => {
                       options={specialities}
                       value={selectedSpeciality}
                       onChange={(value) => {
-                        setSelectedSpeciality(value); 
-                        formik.setFieldValue("speciality", value); 
+                        setSelectedSpeciality(value);
+                        formik.setFieldValue("speciality", value);
                       }}
                     />
                   </div>
                 )}
 
-                <div className="flex flex-col gap-1 px-3">
+                <div className="flex flex-col gap-1 sm:px-3">
                   <label htmlFor="password">Password</label>
                   <input
                     id="password"
@@ -452,40 +525,60 @@ const Register = () => {
                     className="cursor-pointer border p-2 pl-3 rounded-xl w-full focus:outline-none focus:ring-0 focus:border-blue-500"
                     placeholder="Password"
                   />
-                  {/* {formik.touched.password && formik.errors.password ? (
-            <div>{formik.errors.password}</div>
-          ) : null} */}
+                  {formik.touched.password && formik.errors.password ? (
+                    <div className="text-red-500">{formik.errors.password}</div>
+                  ) : null}
                 </div>
 
-                <div className="flex gap-2 cursor-pointer font-medium px-3">
+                <div className="flex gap-2 font-medium sm:px-3">
                   <input
                     checked={checked}
                     onChange={(e) => setChecked(e.target.checked)}
                     type="checkbox"
                     id="agree"
                     name="agree"
+                    className="cursor-pointer"
                   />
                   <p>
                     <>
                       {`I agree to the `}
-                      <span className="underline text-blue-400 cursor-pointer">
+                      <Link
+                        href="/terms-and-conditions"
+                        className="underline text-blue-400 cursor-pointer"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         Terms & Privacy
-                      </span>
+                      </Link>
                     </>
                   </p>
                 </div>
 
-                <div className="w-full absolute sm:bottom-5 bottom-10 flex flex-col gap-3">
-                  <button
-                    className={`p-2 mt-3 rounded-xl w-full ${
-                      formik.isValid && !loading
-                        ? "bg-blue-600 hover:bg-blue-800 text-white"
-                        : "bg-gray-400 text-gray-200 cursor-not-allowed"
-                    }`}
-                    type="submit" disabled={!formik.isValid || loading}
-                  >
-                    Register
-                  </button>
+                <div className="w-full flex flex-col gap-3 bg-white">
+                  <div className="text-red-500">
+                    {errorRegister && errorRegister}
+                  </div>
+                  {notVerifyed ? (
+                    <div
+                      className={`p-2 cursor-pointer mt-3 rounded-xl w-full bg-blue-600 hover:bg-blue-800 text-white text-center`}
+                    onClick={handleVerify}
+                    >
+                      Verify Now
+                    </div>
+                  ) : (
+                    <button
+                      className={`p-2 mt-3 rounded-xl w-full ${
+                        formik.isValid && !loading
+                          ? "bg-blue-600 hover:bg-blue-800 text-white"
+                          : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      }`}
+                      type="submit"
+                      disabled={!formik.isValid || loading}
+                    >
+                      Register
+                    </button>
+                  )}
+
                   <div className="flex gap-1 mt-[-10px]">
                     <span>Already have an account ?</span>
                     <span
@@ -495,10 +588,11 @@ const Register = () => {
                       Sign in
                     </span>
                   </div>
+                  <div></div>
                 </div>
               </form>
             </div>
-            <div className="bg-blue-600 lg:block hidden h-full w-1/2 rounded-2xl text-white text-6xl text-center"></div>
+            <div className="bg-blue-600 lg:block hidden h-auto w-1/2 rounded-2xl text-white text-6xl text-center"></div>
           </div>
         </div>
       ) : (
@@ -590,13 +684,22 @@ const Register = () => {
               {error && <span className="text-red-500">{error}</span>}
 
               <div className="flex justify-center gap-1">
-                <button
-                  type="submit"
-                  disabled={loading || !otpInputFilled}
-                  className="border w-2/3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300"
-                >
-                  {loading ? "Sending..." : "Confirm"}
-                </button>
+              {error ? (
+                  <div
+                    className="text-center cursor-pointer border w-2/3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300"
+                    onClick={handleVerify}
+                  >
+                    Resend
+                  </div>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={loading || !otpInputFilled}
+                    className="border w-2/3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300"
+                  >
+                    {loading ? "Sending..." : "Confirm"}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}

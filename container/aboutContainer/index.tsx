@@ -16,7 +16,7 @@ const AboutContainer = ({}: IProps) => {
         <div className="container">
         <h1 className="text-5xl text-blue-500">About Us</h1>
         <p className="mt-10">
-          StudentV is a unique platform created for university students in
+          StudenV is a unique platform created for university students in
           Azerbaijan. Our primary goal is to facilitate the exchange of
           knowledge and experiences among students, support their development,
           and establish a hub for connecting them with the business world. Here,
@@ -34,7 +34,7 @@ const AboutContainer = ({}: IProps) => {
         </p>
         <br />
         <p>
-          As the StudentV team, we aim to contribute to students' academic and
+          As the StudenV team, we aim to contribute to students' academic and
           personal growth by providing them with an innovative environment. We
           are here to create a community where every student can share their
           ideas and develop their skills.

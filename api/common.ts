@@ -358,6 +358,15 @@ export const getCompanyById = async (id:string) => {
   }
 };
 
+export const postCompanies = async (data:any) => {
+  try {
+    const res = await api.post(`companies`,data);
+    return res.data;
+  } catch (error: any) {
+    return null;
+  }
+};
+
 // Resources
 
 export const getResources = async () => {

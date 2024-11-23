@@ -4,7 +4,7 @@ const baseURL = "https://studenv-2mo8x.ondigitalocean.app";
 export const registerStudent = async (data: any) => {
   try {
     const response = await axios.post(`${baseURL}/register/university`, data);
-    return response.data;
+    return response;
   } catch (error: any) {
     return error;
   }
@@ -12,7 +12,7 @@ export const registerStudent = async (data: any) => {
 export const registerGuest = async (data: any) => {
   try {
     const response = await axios.post(`${baseURL}/register`, data);
-    return response.data;
+    return response;
   } catch (error: any) {
     return error;
   }
@@ -20,7 +20,7 @@ export const registerGuest = async (data: any) => {
 export const registerCompany = async (data: any) => {
   try {
     const response = await axios.post(`${baseURL}/register/company`, data);
-    return response.data;
+    return response;
   } catch (error: any) {
     return error;
   }
@@ -32,9 +32,9 @@ export const login = async (data: any) => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    return response.data;
+    return response;
   } catch (error: any) {
-    return null;
+    return error;
   }
 };
 
@@ -43,7 +43,18 @@ export const verifyOtp = async (email: string, otp_code: string) => {
     const response = await axios.post(`${baseURL}/verify-otp`, null, {
       params: { email, otp_code },
     });
-    return response.data;
+    return response;
+  } catch (error: any) {
+    return error;
+  }
+};
+
+export const verifyOtpResend = async (email: string) => {
+  try {
+    const response = await axios.post(`${baseURL}/verify-otp/resend`, null, {
+      params: { email},
+    });
+    return response;
   } catch (error: any) {
     return null;
   }

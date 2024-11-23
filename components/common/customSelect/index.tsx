@@ -26,7 +26,7 @@ const CustomSelect = ({ options, value, onChange, label }: IProps) => {
   );
 
   return (
-    <div className="flex flex-col gap-1 px-3 relative">
+    <div className="flex flex-col gap-1 sm:px-3 relative">
       {label && <label>{label}</label>}
       {isOpen ? (
         <input

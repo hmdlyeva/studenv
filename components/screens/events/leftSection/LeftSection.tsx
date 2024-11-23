@@ -38,7 +38,7 @@ const LeftSection = ({ theme }: IProps) => {
                     theme === "white" ? "text-black" : "text-white"
                   }`}
                 >
-                 {i%3 === 0 ? "Education" : i%3 === 1 ? "StartUp" : i%3 === 2 ? "Hackaton" : "Other"}
+                 {i%4 === 0 ? "Education" : i%4 === 1 ? "StartUp" : i%4 === 2 ? "Hackaton" : "Job Application"}
                 </h3>
                 <p className="text-sm text-gray-400">
                   912 People has join this event

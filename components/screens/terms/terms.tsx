@@ -6,14 +6,14 @@ const Terms = () => {
       <h1 className="text-5xl text-blue-500 relative top-40">Terms and Conditions</h1>
       <ul className="w-full mx-auto flex flex-col gap-4 mt-44">
         <li>
-          Welcome to the StudentV platform! By accessing and using our platform,
+          Welcome to the StudenV platform! By accessing and using our platform,
           you agree to comply with the following terms and conditions. Please
           read these carefully, as they define the rules for using our services.
         </li>
         <li>
           1. <strong>General Information</strong>
           <p>
-            The StudentV platform is designed to provide students with valuable
+            The StudenV platform is designed to provide students with valuable
             resources, services, and opportunities. These terms govern your use
             of the platform and establish the rights and responsibilities of
             both parties.
@@ -52,7 +52,7 @@ const Terms = () => {
         <li>
           3. <strong>Services</strong>
           <p>
-            StudentV offers various services and resources for students, which
+            StudenV offers various services and resources for students, which
             may include educational tools, networking opportunities, and
             informational content. We reserve the right to update, modify, or
             discontinue any service at any time without prior notice.
@@ -105,7 +105,7 @@ const Terms = () => {
         <li>
           6. <strong>Intellectual Property</strong>
           <p>
-            All content on the StudentV platform, including text, graphics,
+            All content on the StudenV platform, including text, graphics,
             logos, and software, is protected by intellectual property laws. You
             may not reproduce, distribute, or modify any content without prior
             written consent.
@@ -115,7 +115,7 @@ const Terms = () => {
           7. <strong>Limitation of Liability</strong>
           <p>
             While we strive to ensure the platform operates smoothly, we do not
-            guarantee uninterrupted or error-free services. StudentV is not
+            guarantee uninterrupted or error-free services. StudenV is not
             liable for any technical issues, service disruptions, or
             user-generated content.
           </p>
@@ -133,7 +133,7 @@ const Terms = () => {
         <li>
           9. <strong>Amendments to Terms</strong>
           <p>
-            StudentV reserves the right to update or modify these terms at any
+            StudenV reserves the right to update or modify these terms at any
             time. Users will be notified of any significant changes, and
             continued use of the platform indicates acceptance of the updated
             terms.
@@ -148,14 +148,14 @@ const Terms = () => {
           </p>
         </li>
         <li>
-          <strong>Email</strong>: info@studentv.az
+          <strong>Email</strong>: info@studenv.az
           <p>
-            Thank you for trusting the StudentV project. We are committed to
+            Thank you for trusting the StudenV project. We are committed to
             protecting your privacy rights!
           </p>
           <strong>Phone</strong>: +994 XX XXX XXXX
           <p>
-            By using the StudentV platform, you agree to abide by these terms
+            By using the StudenV platform, you agree to abide by these terms
             and conditions. Failure to comply may result in suspension or
             termination of access to the platform.
           </p>

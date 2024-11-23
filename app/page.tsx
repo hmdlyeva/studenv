@@ -12,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metaTitle: "StudenV",
     metaDescription:"Student Environment",
     metaKeyword:"Student Environment",
+    canonical:"/"
   }
   return {
     title: meta?.metaTitle ?? "",
