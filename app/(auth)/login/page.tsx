@@ -4,11 +4,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { login, verifyOtp, verifyOtpResend } from "@/api/auth";
 import { useRouter } from "next/navigation";
-import { getUsers, postCompanies, postProfile } from "@/api/common";
+import { postCompanies, postProfile } from "@/api/common";
 import Image from "next/image";
 
 const Login = () => {
-  const [checked, setChecked] = useState(false);
   const [errorLogin, setErrorLogin] = useState("");
   const [notVerifyed, setNotVerifyed] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState<string>("");
@@ -44,7 +43,6 @@ const Login = () => {
           client_secret: "string",
         };
         const response = await login(data);
-console.log(response)
         if (response?.status === 200) {
           if (typeof window !== "undefined") {
             localStorage.setItem(

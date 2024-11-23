@@ -274,16 +274,8 @@ const Register = () => {
           } else {
             setErrorRegister("Something went wrong. Please try later");
           }
-        } catch (error: any) {
-          console.error("Registration failed", error);
-          if (error.response?.data?.detail) {
-            setErrorRegister(error.response?.data?.detail);
-            setIsModalOpen(false);
-          } else if (!error.response) {
-            setErrorRegister("Network error or no response from the server.");
-          } else {
-            setErrorRegister("An unexpected error occurred.");
-          }
+        } catch (error) {
+          console.error("Register failed", error);
         }
       } else {
         setErrorRegister(
