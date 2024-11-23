@@ -1,5 +1,5 @@
 import axios from "axios";
-const apiURL = "https://studenv-2mo8x.ondigitalocean.app/";
+const apiURL = "https://studenv.online/api/";
 
 export const apiConfig = {
   baseUrl: `${apiURL}`,
