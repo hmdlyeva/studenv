@@ -17,7 +17,7 @@ const MiddSection = ({ theme, resources }: IProps) => {
       const tagsMap: Record<string, ITag[]> = {};
 
       await Promise.all(
-        resources.map(async (resource) => {
+        resources?.map(async (resource) => {
           const tags = await getResourceTags(resource.id);
           tagsMap[resource.id] = tags;
         })
@@ -31,7 +31,7 @@ const MiddSection = ({ theme, resources }: IProps) => {
   return (
     <div className="middle w-full flex flex-col gap-6 h-full py-6">
       <div className="h-[80vh] w-[95%] mx-auto overflow-y-auto scrollbar-none flex flex-col gap-6">
-        {resources.map((p, i) => (
+        {resources?.map((p, i) => (
           <div
             key={i}
             className={`post border rounded-2xl p-4 flex md:flex-row flex-col justify-between items-center ${

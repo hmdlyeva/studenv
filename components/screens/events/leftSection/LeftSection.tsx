@@ -25,7 +25,7 @@ const LeftSection = ({ theme }: IProps) => {
           }`}
         />
         <div className="channels max-h-[20vh] md:max-h-[66vh] md:overflow-y-auto overflow-x-auto scrollbar-none flex md:flex-col flex-row">
-          {eventData.map((event, i) => (
+          {eventData?.map((event, i) => (
             <div
               key={i}
               className={`channel px-4 py-4 min-w-[140px] flex flex-col gap-3 md:flex-row cursor-pointer ${theme === "white" ? "hover:bg-slate-50": "hover:bg-zinc-900"}`}

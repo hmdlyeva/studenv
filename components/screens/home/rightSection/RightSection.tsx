@@ -29,7 +29,7 @@ const RightSection = ({theme, weeklyPopularTags, upcomingEvents}:IProps) => {
         <h1 className={`font-semibold p-4 ${theme === "white" ? "text-black": "text-white"}`}>Popular Hastag on This Day</h1>
         <div className={`${theme === "white" ? "bg-gray-300 h-[1px]": "bg-gray-600 h-[1px]"}`}/>
         <div className="hastags flex flex-col py-2">
-          {weeklyPopularTags.map((hastag, i) => (
+          {weeklyPopularTags?.map((hastag, i) => (
             <div key={i} className="hastag px-4 py-2 flex justify-between items-center hover:bg-[#f9f9f9] cursor-pointer">
               <div className="left flex flex-col justify-between gap-2">
                 <h3 className={`text-sm font-semibold ${theme === "white" ? "text-black": "text-white"}`}>
@@ -52,7 +52,7 @@ const RightSection = ({theme, weeklyPopularTags, upcomingEvents}:IProps) => {
         <h1 className={`font-semibold p-4 ${theme === "white" ? "text-black": "text-white"}`}>Upcoming Event</h1>
         <div className={`${theme === "white" ? "bg-gray-300 h-[1px]": "bg-gray-600 h-[1px]"}`}/>
         <div className="events pt-2 pb-2 max-h-[33vh] overflow-y-auto ">
-          {upcomingEvents && upcomingEvents.map((event, i) => (
+          {upcomingEvents && upcomingEvents?.map((event, i) => (
             <div key={i} className="event p-4 flex flex-col gap-3 md:flex-row cursor-pointer hover:bg-[#f9f9f9]">
               {/* <div className="img bg-slate-300 rounded-md w-16 h-16"></div> */}
               <div className="detail">

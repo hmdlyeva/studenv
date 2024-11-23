@@ -93,12 +93,12 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
             const likeData = await userAllLikedDiscussion(filteredUser.user_id);
             const saveData = await userAllSavedDiscussion(filteredUser.user_id);
             setLikedDiscussions(
-              likeData.map(
+              likeData?.map(
                 (discussion: IDiscussion) => discussion.discussion_id
               )
             );
             setSavedDiscussions(
-              saveData.map(
+              saveData?.map(
                 (discussion: IDiscussion) => discussion.discussion_id
               )
             );
@@ -249,7 +249,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
         {post.content}
       </h1>
       <ul className="text-gray-500 flex gap-x-1 lg:gap-x-1 md:gap-x-1 sm:gap-x-1 flex-wrap">
-        {post.tags.map((tag: string, i: number) => (
+        {post?.tags?.map((tag: string, i: number) => (
           <li key={i}>#{tag}</li>
         ))}
       </ul>

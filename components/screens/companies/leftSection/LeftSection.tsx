@@ -17,7 +17,7 @@ const LeftSection = ({ theme , companies, setClickedCompany}: IProps) => {
         }`}
       >
         <div className="channels h-auto max-h-[93vh] md:h-auto md:overflow-y-auto overflow-x-auto flex md:flex-col flex-row md:gap-1 gap-1">
-          {companies && companies.map((comp, i) => (
+          {companies && companies?.map((comp, i) => (
             <div
               key={i} onClick={()=>setClickedCompany(comp.id)}
               className={`channel p-4 ps-6 min-w-[160px] flex flex-col items-center gap-4 md:flex-row cursor-pointer ${theme === "white" ? "hover:bg-slate-50": "hover:bg-zinc-900"}`}

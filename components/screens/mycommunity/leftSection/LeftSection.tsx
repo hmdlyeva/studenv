@@ -28,7 +28,7 @@ const LeftSection = ({ theme, communities, setSelectedCommunity }: IProps) => {
           }`}
         />
         <div className="channels max-h-[20vh] md:max-h-[66vh] md:overflow-y-auto overflow-x-auto scrollbar-none flex md:flex-col flex-row">
-          {communities.map((chanel, i: number) => (
+          {communities?.map((chanel, i: number) => (
             <div key={i}>
               <Card
                 chanel={chanel}

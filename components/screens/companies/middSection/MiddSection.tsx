@@ -103,7 +103,7 @@ const MiddSection = ({ theme, clickedCompany }: Props) => {
             </div>
           ) : (
             <div className="flex flex-col">
-              {postData.map((p, i) => (
+              {postData?.map((p, i) => (
                 <div
                   key={i}
                   className={`p-4 ps-6 border border-l-0 border-r-0 flex flex-col items-center justify-between md:flex-row cursor-pointer ${
