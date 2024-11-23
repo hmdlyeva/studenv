@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /api/
 
-Sitemap: https://studenv.com/sitemap.xml
+Sitemap: https://studenv.online/sitemap.xml
