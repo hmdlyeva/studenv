@@ -12,6 +12,7 @@ import {
   userUnSaveDiscussion,
 } from "@/api/common";
 import CommentIcon from "@/components/ui/CommentIcon";
+import FolderIcon from "@/components/ui/FolderIcon";
 import LikedIcon from "@/components/ui/LikedIcon";
 import LikeIcon from "@/components/ui/LikeIcon";
 import ReplyIcon from "@/components/ui/ReplyIcon";
@@ -50,44 +51,67 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       minute: "2-digit",
     };
     const date = new Date(dateString);
-    date.setHours(date.getHours() + 4);
+    date.setHours(date.getHours() + 15);
     return new Intl.DateTimeFormat("en-US", options)
       .format(date)
       .replace(",", "");
   };
+
+  const isImage = (url: string) => {
+    const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
+    const extension = url.slice(-3).toLowerCase();
+    return imageExtensions.includes(extension);
+  };
+
+  const isVideo = (url: string) => {
+    const videoExtensions = ["mp4", "webm", "ogg"];
+    const extension = url.slice(-3).toLowerCase();
+    return videoExtensions.includes(extension);
+  };
+
+  const isFile = (url: string) => {
+    const fileExtensions = ["pdf", "doc", "docx", "txt"];
+    const extension = url.slice(-3).toLowerCase();
+    return fileExtensions.includes(extension);
+  };
+
   const handleDelete = async (id: string) => {
-     await deleteDiscussion(id);
+    await deleteDiscussion(id);
   };
   const handleLikeDiscussionActions = async (userId: string, disId: string) => {
     const isLiked = likedDiscussions.includes(disId);
     if (!isLiked) {
-       await userLikeDiscussion(userId, disId);
+      await userLikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchLikesCount(post.discussion_id);
+      fetchLikedDiscussions(post.discussion_id);
     } else {
-       await userUnlikeDiscussion(userId, disId);
+      await userUnlikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => [...prev, disId]);
+      fetchLikesCount(post.discussion_id);
+      fetchLikedDiscussions(post.discussion_id);
     }
   };
   const handleSaveDiscussionActions = async (userId: string, disId: string) => {
     const isSaved = savedDiscussions.includes(disId);
     if (!isSaved) {
-       await userSaveDiscussion(userId, disId);
+      await userSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchSavesCount(post.discussion_id);
+      fetchSavedDiscussions(post.discussion_id);
     } else {
-       await userUnSaveDiscussion(userId, disId);
+      await userUnSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => [...prev, disId]);
+      fetchSavesCount(post.discussion_id);
+      fetchSavedDiscussions(post.discussion_id);
     }
   };
   useEffect(() => {
-    const confirmedEmail = localStorage.getItem("confirmEmail");
-    if (confirmedEmail) {
-      const filteredUser = users.find((user) => user.email === confirmedEmail);
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      const filteredUser = users.find((user) => user.user_id === userId);
       if (filteredUser) {
         setUserData(filteredUser);
-        localStorage.setItem("userInfo", JSON.stringify(filteredUser));
-
         (async () => {
           try {
             const likeData = await userAllLikedDiscussion(filteredUser.user_id);
@@ -110,12 +134,37 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
     }
   }, [users]);
 
+  const fetchLikedDiscussions = async (discussionId: string) => {
+    try {
+      const resp = await userAllLikedDiscussion(discussionId);
+      if (resp) {
+        setLikedDiscussions(
+          resp?.map((discussion: IDiscussion) => discussion.discussion_id)
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching liked discussions:", error);
+    }
+  };
+
+  const fetchSavedDiscussions = async (discussionId: string) => {
+    try {
+      const resp = await userAllSavedDiscussion(discussionId);
+      if (resp) {
+        setSavedDiscussions(
+          resp?.map((discussion: IDiscussion) => discussion.discussion_id)
+        );
+      }
+    } catch (error) {
+      console.error("Saved sayısı alınırken hata oluştu:", error);
+    }
+  };
+
   const addComment = async (id: string) => {
     const content = contentByDiscussion[id]?.trim();
     if (!content) return;
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-    const userId = userInfo.user_id;
+    const userId = localStorage.getItem("userId");
 
     const newComment = {
       content,
@@ -198,7 +247,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       }`}
     >
       <div className="flex justify-between">
-        <div className="left flex sm:gap-4 gap-1">
+        <div className="left flex sm:gap-4 gap-2">
           <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer overflow-hidden">
             <img
               src={"/images/hamida.jpg"}
@@ -208,19 +257,23 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
           </div>
           <div className="detail flex flex-col justify-between">
             <h1
-              className={`sm:text-xl text-base font-medium ${
+              className={`text-xl font-medium ${
                 theme === "white" ? "text-black" : "text-white"
               }`}
             >
               {post.title}
             </h1>
             <div className="user flex gap-2 items-center">
-              <div className="img w-6 h-6 rounded-lg bg-slate-400 cursor-pointer sm:block hidden"></div>
-              <div className="flex flex-col sm:flex-row md:items-center sm:gap-1">
-                <p className="text-blue-600 cursor-pointer truncate sm:text-base text-sm">
+              <div className="flex flex-row items-center gap-1">
+                <p className="text-blue-600 cursor-pointer truncate text-base mob:block hidden">
                   {userContent ? userContent.name : "Unknown User"}
                 </p>
-                <p className="sm:text-sm text-gray-400 text-[10px]">
+                <p className="text-blue-600 cursor-pointer truncate text-base mob:hidden block">
+                  {userContent
+                    ? userContent.name.split(" ")[0]
+                    : "Unknown User"}
+                </p>
+                <p className="text-sm text-gray-400">
                   | {formatDate(post.date_of_created)}
                 </p>
               </div>
@@ -245,7 +298,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
           <ThreeDot />
         </div>
       </div>
-      <h1 className={`py-1 ${theme === "white" ? "text-black" : "text-white"}`}>
+      <h1 className={`py-2 ${theme === "white" ? "text-black" : "text-white"}`}>
         {post.content}
       </h1>
       <ul className="text-gray-500 flex gap-x-1 lg:gap-x-1 md:gap-x-1 sm:gap-x-1 flex-wrap">
@@ -253,13 +306,41 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
           <li key={i}>#{tag}</li>
         ))}
       </ul>
-      <div className="img w-full md:h-[400px] h-[300px] rounded-lg bg-slate-400">
-        <img
-          src={post.file_url}
-          alt={post.id}
-          className="img w-full h-full rounded-lg object-cover"
-        />
-      </div>
+      {post.file_url && (
+        <div
+          className={`file w-full rounded-lg flex items-center ${
+            isFile(post.file_url)
+              ? "justify-start"
+              : "sm:h-[400px] mini:h-[340px] h-[280px] bg-slate-400 justify-center"
+          }`}
+        >
+          {isImage(post.file_url) ? (
+            <img
+              src={post.file_url}
+              alt={post.id}
+              className="img w-full h-full rounded-lg object-cover"
+            />
+          ) : isVideo(post.file_url) ? (
+            <video
+              src={post.file_url}
+              controls
+              className="video w-full h-full rounded-lg object-cover"
+            />
+          ) : isFile(post.file_url) ? (
+            <a
+              href={post.file_url}
+              download
+              className="shared-file flex items-center text-blue-400 hover:underline"
+            >
+              <FolderIcon />
+              Shared File
+            </a>
+          ) : (
+            ""
+          )}
+        </div>
+      )}
+
       <div className="post_footer flex justify-between text-gray-500 my-2">
         <ul className="flex gap-2 md:gap-8">
           <li
@@ -271,7 +352,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
               );
             }}
           >
-            {likedDiscussions.includes(post.discussion_id) ? (
+            {likedDiscussions?.includes(post.discussion_id) ? (
               <LikedIcon />
             ) : (
               <LikeIcon />
@@ -301,7 +382,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
               );
             }}
           >
-            {savedDiscussions.includes(post.discussion_id) ? (
+            {savedDiscussions?.includes(post.discussion_id) ? (
               <SavedIcon />
             ) : (
               <SaveIcon />
@@ -321,7 +402,11 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
               <div className="w-full rounded-lg bg-[#f9f9f9] p-2 mt-1 flex justify-between items-end">
                 <div className="detail flex gap-2 w-full items-start">
                   <div className="rounded-full overflow-hidden w-6 h-6">
-                    <img src="/images/hamida.jpg" alt="" />
+                    <img
+                      src="/images/hamida.jpg"
+                      alt=""
+                      className="object-cover w-full h-full"
+                    />
                   </div>
                   <p className="w-[95%]">{comment.content}</p>
                 </div>
@@ -343,7 +428,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
               handleContentChange(post.discussion_id, e.target.value)
             }
             placeholder="Write a comment..."
-            className={`border-2 p-2 ps-4 rounded-lg w-full ${
+            className={`border-2 pe-2 ps-4 py-[7px] rounded-lg w-full ${
               theme === "white"
                 ? "bg-whitesecond"
                 : "bg-secondblack border-gray-600"

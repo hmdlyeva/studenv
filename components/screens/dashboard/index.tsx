@@ -15,6 +15,8 @@ import Whoweare from "../default/whoweare/whoweare";
 import Whatwedo from "../default/whatwedo/whatwedo";
 import Proplan from "../default/proplan/proplan";
 import Footer from "../default/footer/footer";
+import { getCompanyById, getProfileById, getUserById } from "@/api/common";
+import { useRouter } from "next/navigation";
 
 interface IProps {
   users: IUser[];
@@ -35,7 +37,10 @@ const Dashboard = ({
   upcomingEvents,
 }: IProps) => {
   const [theme, setTheme] = useState("white");
-  const [userData, setUserData] = useState<IUser>();
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [userRole, setUserRole] = useState<string>("");
+  const router = useRouter()
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
@@ -44,27 +49,58 @@ const Dashboard = ({
   }, []);
 
   useEffect(() => {
-    const confirmedEmail = localStorage.getItem("confirmEmail");
-    if (confirmedEmail) {
-      const filteredUser = users.find((user) => user.email === confirmedEmail);
-      if (filteredUser) {
-        // const userData = dispatch(getUserDataById(filteredUser.user_id));
-        // if (userData) {
-        setUserData(filteredUser);
-        localStorage.setItem("userInfo", JSON.stringify(filteredUser));
-        // }
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      const userRole = localStorage.getItem("userRole");
+
+      if (userId && userRole) {
+        try {
+          let resp;
+          setUserRole(userRole);
+
+          if (userRole === "Student") {
+            resp = await getProfileById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("profile yoxdu bu studentin?", resp);
+            }
+          } else if (userRole === "Company") {
+            resp = await getCompanyById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("company datasi yoxdu bu companynin?", resp);
+            }
+          } else if (userRole === "Guest") {
+            resp = await getUserById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("user datasi yoxdu bu guestin?", resp);
+            }
+          }
+        } catch (error) {
+          console.error("Data fetch sırasında hata:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
-    }
-  }, [users]);
+    };
+
+    fetchUserData();
+  }, []);
 
   {
-    return userData ? (
+    return !loading && userData ? (
       <div
-        className={`pt-40 dashboard ${
+        className={`dashboard ${
           theme === "white" ? "bg-whitesecond" : "bg-secondblack"
         } `}
       >
-        <div className="container w-full flex justify-between gap-2 md:gap-6 items-start">
+        <div className="container w-full relative flex justify-between gap-2 lg:gap-6 items-start">
           <LeftSection
             theme={theme}
             communitiesPopular={communitiesPopular}
@@ -76,10 +112,12 @@ const Dashboard = ({
             events={events}
             weeklyPopularTags={weeklyPopularTags}
             upcomingEvents={upcomingEvents}
+            communitiesPopular={communitiesPopular}
+            latestEvents={latestEvents}
           />
         </div>
       </div>
-    ) : (
+    ) : !loading && (
       <div
         className={`dashboard ${
           theme === "white" ? "bg-whitesecond" : "bg-secondblack"

@@ -227,6 +227,15 @@ export const getUsers = async () => {
   }
 };
 
+export const getUserById = async (id:string) => {
+  try {
+    const res = await api.get(`users/${id}`);
+    return res;
+  } catch (error: any) {
+    return null;
+  }
+};
+
 // Communities
 
 export const getCommunities = async () => {
@@ -352,7 +361,7 @@ export const getCompanies = async () => {
 export const getCompanyById = async (id:string) => {
   try {
     const res = await api.get(`companies/${id}`);
-    return res.data;
+    return res;
   } catch (error: any) {
     return null;
   }
@@ -392,7 +401,7 @@ export const getResourceTags = async (id:string) => {
 export const getProfileById = async (id:string) => {
   try {
     const res = await api.get(`profiles/${id}`);
-    return res.data;
+    return res;
   } catch (error: any) {
     return null;
   }

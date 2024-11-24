@@ -34,7 +34,7 @@ const faqData = [
       "Bəli, şirkətlər də qeydiyyatdan keçə bilərlər. Şirkətlər aktiv tələbələri, onların ballarını və CV-lərini görə bilərlər.",
   },
   {
-    question: "tudenV-də hansı tədbirlər mövcuddur?",
+    question: "StudenV-də hansı tədbirlər mövcuddur?",
     answer:
       "Tədbirlər bölməsində könüllülük, təqaüdlər, əməkdaşlıq imkanları, təcrübə proqramları və kurslar mövcuddur. Bəzi tədbirlər isə premium ola bilər.",
   },

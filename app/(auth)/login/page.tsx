@@ -49,7 +49,8 @@ const Login = () => {
               "accessToken",
               response.data.access_token
             );
-            localStorage.setItem("confirmEmail", values.username);
+            localStorage.setItem("userId", response.data.user_id);
+            localStorage.setItem("userRole", response.data.role);
           }
 
           if (response.data.role === "Student") {
@@ -72,7 +73,7 @@ const Login = () => {
             router.push("/");
           } else if (response.data.role === "Company") {
             await postCompanies({
-              company_name: "",
+              name: "",
               img_url: "",
               industry: "",
               description: "",

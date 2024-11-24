@@ -16,6 +16,11 @@ const config: Config = {
         textwhite: '#ffffff', 
         textblack: '#000000',
       },
+      screens: {
+        'tb': '800px',
+        'mob': '560px',
+        'mini': '460px',
+      },
     },
   },
   plugins: [

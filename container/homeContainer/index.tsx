@@ -14,9 +14,10 @@ interface IProps {
 }
 
 const HomeContainer = ({users, events, discussions, communitiesPopular, latestEvents, weeklyPopularTags, upcomingEvents}: IProps) => {
+  
   return (
     <main>
-      <Navbar url="/" users={users}/>
+      <Navbar url="/"/>
       <Dashboard upcomingEvents={upcomingEvents} users={users} discussions={discussions} events={events} communitiesPopular={communitiesPopular} latestEvents={latestEvents} weeklyPopularTags={weeklyPopularTags}/>
     </main>
   );

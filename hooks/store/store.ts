@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 // Zustand store type
 export type Store = {
+  searchedItem:string;
   statusModal: boolean;
   errorModal: boolean;
   modalMessage?: string;
@@ -12,6 +13,7 @@ export type Store = {
 };
 
 const initialValue = {
+  searchedItem:"",
   statusModal: false,
   errorModal: false,
   modalMessage: "",
