@@ -7,7 +7,6 @@ import {
   IDiscussion,
   IEvent,
   ITag,
-  IUser,
 } from "@/types/common.type";
 import React, { useEffect, useState } from "react";
 import Hero from "../default/hero/hero";
@@ -16,7 +15,7 @@ import Whatwedo from "../default/whatwedo/whatwedo";
 import Proplan from "../default/proplan/proplan";
 import Footer from "../default/footer/footer";
 import { getCompanyById, getProfileById, getUserById } from "@/api/common";
-import { useRouter } from "next/navigation";
+import { ICompany, IProfile, IUser } from "@/types/common.type";
 
 interface IProps {
   users: IUser[];
@@ -37,10 +36,8 @@ const Dashboard = ({
   upcomingEvents,
 }: IProps) => {
   const [theme, setTheme] = useState("white");
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [userRole, setUserRole] = useState<string>("");
-  const router = useRouter()
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
@@ -56,7 +53,6 @@ const Dashboard = ({
       if (userId && userRole) {
         try {
           let resp;
-          setUserRole(userRole);
 
           if (userRole === "Student") {
             resp = await getProfileById(userId);

@@ -1,4 +1,8 @@
 export interface IUser {
+  company_name?:string;
+  profile_photo?:string;
+  img_url?:string;
+
   id: string;
   name: string;
   email: string;
@@ -46,6 +50,9 @@ export interface IEvent {
 }
 
 export interface ICompany {
+  name?:string;
+  profile_photo?:string;
+
   id: string;
   company_name: string;
   img_url: string;
@@ -69,6 +76,9 @@ export interface IResource {
 }
 
 export interface IProfile {
+  company_name?:string;
+  img_url?:string
+
   sex: string;
   study_language: string;
   job_status: string;

@@ -4,7 +4,6 @@ import DownArrow from "@/components/ui/DownArrow";
 import PlusIcon from "@/components/ui/PlusIcon";
 import SearchIcon from "@/components/ui/SearchIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
-import LoadingContainer from "@/container/loadingContainer";
 import { ICompany, IProfile, IUser } from "@/types/common.type";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -111,7 +110,7 @@ const Navbar = ({ url }: IProps) => {
   const [channelModal, setchannelModal] = useState(false);
   const [userModal, setUserModal] = useState(false);
   // const [isActive, setIsActive] = useState(0);
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
   const [userRole, setUserRole] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
@@ -285,7 +284,7 @@ const Navbar = ({ url }: IProps) => {
                     <div className="text-lg md:hidden mob:block hidden">
                       {userData.name
                         ? userData.name.split(" ")[0]
-                        : userData.company_name.split(" ")[0]}
+                        : userData.company_name && userData.company_name.split(" ")[0]}
                     </div>
                     <Image
                       alt="user_img"
