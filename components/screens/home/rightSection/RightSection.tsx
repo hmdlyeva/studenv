@@ -9,7 +9,6 @@ interface IProps {
   weeklyPopularTags: ITag[];
   upcomingEvents: IEvent[];
   communitiesPopular: ICommunityPopular[];
-  latestEvents: IEvent[];
 }
 
 const RightSection = ({
@@ -17,7 +16,6 @@ const RightSection = ({
   weeklyPopularTags,
   upcomingEvents,
   communitiesPopular,
-  latestEvents,
 }: IProps) => {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {

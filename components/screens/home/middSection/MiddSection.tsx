@@ -22,7 +22,6 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
   const [isActive, setIsActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [videoSource, setVideoSource] = useState<string | null>(null);
-  const [youtubeUrl, setYoutubeUrl] = useState<string>("");
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState("");
   const [showMap, setShowMap] = useState(false);
@@ -39,7 +38,6 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
       setSelectedImage("");
 
       setPostImage("");
-      setYoutubeUrl("");
       setUploadedFileUrl("");
       setVideoSource(null);
       setIsActive(false);
@@ -205,17 +203,6 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
     }
   };
 
-  const handleYoutubeUrlChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSelectedImage("");
-    setPdfFileName("");
-    setVideoSource("");
-    setShowMap(false);
-    setIsActive(false);
-    setYoutubeUrl(event.target.value);
-  };
-
   const handleLocationClick = () => {
     setSelectedImage("");
     setPdfFileName("");
@@ -250,7 +237,6 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
     setShowYtInp(false);
     setShowMap(false);
     setPdfFileName(null);
-    setYoutubeUrl("");
     setUploadedFileUrl("");
     setVideoSource(null);
     setSelectedImage(null);

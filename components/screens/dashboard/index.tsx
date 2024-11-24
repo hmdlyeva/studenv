@@ -109,7 +109,6 @@ const Dashboard = ({
             weeklyPopularTags={weeklyPopularTags}
             upcomingEvents={upcomingEvents}
             communitiesPopular={communitiesPopular}
-            latestEvents={latestEvents}
           />
         </div>
       </div>

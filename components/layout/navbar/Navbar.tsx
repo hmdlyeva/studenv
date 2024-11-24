@@ -193,7 +193,7 @@ const Navbar = ({ url }: IProps) => {
     }
   };
 
-  const searchInput = (e: any) => {
+  const searchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFields({ searchedItem: e.target.value });
   };
 

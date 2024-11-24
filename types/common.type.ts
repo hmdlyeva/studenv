@@ -50,11 +50,10 @@ export interface IEvent {
 }
 
 export interface ICompany {
-  name?:string;
   profile_photo?:string;
 
   id: string;
-  company_name: string;
+  name: string;
   img_url: string;
   industry: string;
   description: string;
