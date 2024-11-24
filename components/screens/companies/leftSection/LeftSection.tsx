@@ -29,7 +29,7 @@ const LeftSection = ({ theme , companies, setClickedCompany}: IProps) => {
                     theme === "white" ? "text-black" : "text-white"
                   }`}
                 >
-                  {comp.company_name}
+                  {comp.name}
                 </h3>
                 <p className="text-sm text-gray-400 pt-2">
                  {comp.industry}

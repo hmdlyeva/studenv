@@ -1,5 +1,4 @@
 export interface IUser {
-  company_name?:string;
   profile_photo?:string;
   img_url?:string;
 
@@ -75,7 +74,6 @@ export interface IResource {
 }
 
 export interface IProfile {
-  company_name?:string;
   img_url?:string
 
   sex: string;

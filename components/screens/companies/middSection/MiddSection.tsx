@@ -28,7 +28,7 @@ const MiddSection = ({ theme, clickedCompany }: Props) => {
               theme === "white" ? "text-black" : "text-white"
             }`}
           >
-            {clickedCompany?.company_name}
+            {clickedCompany?.name}
           </h1>
           <p className="text-sm text-gray-400 underline cursor-pointer">
             {clickedCompany?.industry}
