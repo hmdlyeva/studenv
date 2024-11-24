@@ -2,12 +2,10 @@ import Navbar from "@/components/layout/navbar/Navbar";
 import Footer from "@/components/screens/default/footer/footer";
 import React from "react";
 
-type Props = {};
-
-const PrivacyPolicyContainer = (props: Props) => {
+const PrivacyPolicyContainer = () => {
   return (
     <main>
-      <Navbar url="/privacy-policy" users={[]} />
+      <Navbar url="/privacy-policy" />
       <div
         className={`h-[100vh] w-full flex flex-col justify-center items-center ${
           "white" === "white" ? "bg-whitesecond" : "bg-secondblack"

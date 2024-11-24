@@ -3,12 +3,10 @@ import Footer from "@/components/screens/default/footer/footer";
 import Faqs from "@/components/screens/faqs/faqs";
 import React from "react";
 
-type Props = {};
-
-const FaqContainer = (props: Props) => {
+const FaqContainer = () => {
   return (
     <main>
-      <Navbar url="/terms-and-conditions" users={[]} />
+      <Navbar url="/terms-and-conditions" />
       <div
         className="bg-whitesecond pt-20 !important"
       >

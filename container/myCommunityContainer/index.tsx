@@ -1,20 +1,19 @@
 "use client"
 import Navbar from "@/components/layout/navbar/Navbar";
 import React, { useState } from "react";
-import { ICommunity, IDiscussion, IUser } from "@/types/common.type";
+import { ICommunity, IUser } from "@/types/common.type";
 import LeftSection from "@/components/screens/mycommunity/leftSection/LeftSection";
 import MiddSection from "@/components/screens/mycommunity/middSection/MiddSection";
 interface IProps {
   users: IUser[];
-  discussions:IDiscussion[];
   communities:ICommunity[];
 }
 
-const MyCommunityContainer = ({ users, discussions,communities }: IProps) => {
+const MyCommunityContainer = ({ users,communities }: IProps) => {
   const [selectedCommunity, setSelectedCommunity] = useState<string>("")
   return (
     <main>
-      <Navbar url="/mycommunity" users={users} />
+      <Navbar url="/mycommunity"/>
       <div
         className={`mycommunity pt-10 ${
           "white" === "white" ? "bg-whitesecond" : "bg-secondblack"

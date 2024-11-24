@@ -3,12 +3,11 @@ import Footer from "@/components/screens/default/footer/footer";
 import Terms from "@/components/screens/terms/terms";
 import React from "react";
 
-type Props = {};
 
-const TermsContainer = (props: Props) => {
+const TermsContainer = () => {
   return (
     <main>
-      <Navbar url="/terms-and-conditions" users={[]} />
+      <Navbar url="/terms-and-conditions" />
       <div
         className={`bg-whitesecond`}
       >

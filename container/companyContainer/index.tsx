@@ -1,38 +1,43 @@
 "use client"
 import Navbar from "@/components/layout/navbar/Navbar";
 import React, { useEffect, useState } from "react";
-import { ICompany, IDiscussion, IEvent, IUser } from "@/types/common.type";
+import { ICompany } from "@/types/common.type";
 import LeftSection from "@/components/screens/companies/leftSection/LeftSection";
 import MiddSection from "@/components/screens/companies/middSection/MiddSection";
-import { getCompanyById } from "@/api/common";
+import { getCompanyByIdInCompany } from "@/api/common";
 
 interface IProps {
-  users: IUser[];
-  events: IEvent[];
-  discussions: IDiscussion[];
   companies: ICompany[];
 }
 
 const CompanyContainer = ({
-  users,
-  events,
-  discussions,
   companies,
 }: IProps) => {
     const [clickedCompany, setClickedCompany] = useState<string>("");
     const [companyDetails, setCompanyDetails] = useState<ICompany | null>(null); 
   
     useEffect(() => {
-      if (clickedCompany) {
-        getCompanyById(clickedCompany)
-          .then((data) => setCompanyDetails(data)) 
-          .catch((error) => console.error("Error fetching company details:", error));
-      }
+      let isMounted = true; 
+    
+      const fetchCompanyDetails = async () => {
+        if (clickedCompany) {
+          const resp = await getCompanyByIdInCompany(clickedCompany);
+          if (resp && isMounted) {
+            setCompanyDetails(resp.data);
+          }
+        }
+      };
+    
+      fetchCompanyDetails();
+    
+      return () => {
+        isMounted = false; // Bileşen unmount edildiğinde istek sonuçlarını işlemeyi durdurur.
+      };
     }, [clickedCompany]);
 
   return (
     <main>
-      <Navbar url="/" users={users} />
+      <Navbar url="/" />
       <div
         className={`events ${
           "white" === "white" ? "bg-whitesecond" : "bg-secondblack"
