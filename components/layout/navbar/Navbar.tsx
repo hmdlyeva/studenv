@@ -279,12 +279,11 @@ const Navbar = ({ url }: IProps) => {
                 {userData ? (
                   <div className="user flex xl:gap-1 items-center relative z-10">
                     <div className="text-lg md:block hidden">
-                      {userData.name ? userData.name : userData.company_name}
+                      {userData.name && userData.name}
                     </div>
                     <div className="text-lg md:hidden mob:block hidden">
                       {userData.name
-                        ? userData.name.split(" ")[0]
-                        : userData.company_name && userData.company_name.split(" ")[0]}
+                        && userData.name.split(" ")[0]}
                     </div>
                     <Image
                       alt="user_img"
