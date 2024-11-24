@@ -9,7 +9,6 @@ interface Props {
   setUniversity: (value: string) => void;
   setYearOfStudy: (value: string) => void;
   setStudyLang: (value: string) => void;
-  createModal: boolean;
   dateOfBirth: string;
   newPostImage: string;
   userId: string;
@@ -21,7 +20,6 @@ const UniversityDetailModal = ({
   setUniversity,
   setYearOfStudy,
   setStudyLang,
-  createModal,
   dateOfBirth,
   newPostImage,
   userId,

@@ -375,7 +375,6 @@ const Login = () => {
           dateOfBirth={dateOfBirth}
           newPostImage={newPostImage}
           userId={userId}
-          createModal={createModal}
         />
       )}
       {createModal && <CreatingModal />}
