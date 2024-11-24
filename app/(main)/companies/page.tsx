@@ -1,4 +1,4 @@
-import { getCompanies, getDiscussions, getEvents, getUsers } from "@/api/common";
+import { getCompanies } from "@/api/common";
 import { apiConfig } from "@/apiConfig";
 import LoadingContainer from "@/container/loadingContainer";
 import { Metadata } from "next";
@@ -41,12 +41,9 @@ const CompanyContainer = dynamic(() => import("@/container/companyContainer"), {
 });
 
 export default async function Companies() {
-  const usersDataPromise = await getUsers();
-  const eventsDataPromise = await getEvents();
-  const discussionsDataPromise = await getDiscussions();
   const companiesDataPromise = await getCompanies();
-  const [users, events, discussions, companies] = await Promise.all([usersDataPromise, eventsDataPromise, discussionsDataPromise, companiesDataPromise]) 
+  const [ companies] = await Promise.all([companiesDataPromise]) 
   return (
-      <CompanyContainer users={users} events={events} discussions={discussions} companies={companies}/>
+      <CompanyContainer companies={companies}/>
   );
 }

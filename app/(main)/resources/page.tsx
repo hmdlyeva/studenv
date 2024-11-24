@@ -1,4 +1,4 @@
-import { getResources, getUsers } from "@/api/common";
+import { getResources } from "@/api/common";
 import { apiConfig } from "@/apiConfig";
 import LoadingContainer from "@/container/loadingContainer";
 import { Metadata } from "next";
@@ -41,10 +41,9 @@ const ResourceContainer = dynamic(() => import("@/container/resourceContainer"),
 });
 
 export default async function Home() {
-  const usersDataPromise = await getUsers();
   const resourcesDataPromise = await getResources();
-  const [users, resources] = await Promise.all([usersDataPromise, resourcesDataPromise]) 
+  const [ resources] = await Promise.all([ resourcesDataPromise]) 
   return (
-      <ResourceContainer users={users} resources={resources}/>
+      <ResourceContainer  resources={resources}/>
   );
 }

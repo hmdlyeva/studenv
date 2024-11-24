@@ -1,4 +1,4 @@
-import { getDiscussions, getEvents, getUsers } from "@/api/common";
+import { getEvents, getUsers } from "@/api/common";
 import { apiConfig } from "@/apiConfig";
 import LoadingContainer from "@/container/loadingContainer";
 import { Metadata } from "next";
@@ -43,9 +43,8 @@ const EventContainer = dynamic(() => import("@/container/eventContainer"), {
 export default async function Home() {
   const usersDataPromise = await getUsers();
   const eventsDataPromise = await getEvents();
-  const discussionsDataPromise = await getDiscussions();
-  const [users, events, discussions] = await Promise.all([usersDataPromise, eventsDataPromise, discussionsDataPromise]) 
+  const [users, events] = await Promise.all([usersDataPromise, eventsDataPromise]) 
   return (
-      <EventContainer users={users} events={events} discussions={discussions}/>
+      <EventContainer users={users} events={events}/>
   );
 }

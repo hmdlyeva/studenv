@@ -3,7 +3,6 @@ import {
   getProfileByIdInProfile,
   getUserFollowers,
   getUserFollowings,
-  getUsers,
 } from "@/api/common";
 import LoadingContainer from "@/container/loadingContainer";
 import { Metadata } from "next";
@@ -52,20 +51,17 @@ interface ProfilePageParams {
 }
 
 const ProfileContainerPage = async ({ params }: ProfilePageParams) => {
-  const usersDataPromise = await getUsers();
   const profilePromise = await getProfileByIdInProfile(params.id);
   const userFollowersPromise = await getUserFollowers(params.id);
   const userFollowingsPromise = await getUserFollowings(params.id);
 
-  const [users, profile, followers, followings] = await Promise.all([
-    usersDataPromise,
+  const [ profile, followers, followings] = await Promise.all([
     profilePromise,
     userFollowersPromise,
     userFollowingsPromise,
   ]);
   return (
     <ProfileContainer
-      users={users}
       profile={profile}
       followers={followers}
       followings={followings}
