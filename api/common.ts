@@ -407,6 +407,15 @@ export const getProfileById = async (id:string) => {
   }
 };
 
+export const getProfileByIdInProfile = async (id:string) => {
+  try {
+    const res = await api.get(`profiles/${id}`);
+    return res.data;
+  } catch (error: any) {
+    return null;
+  }
+};
+
 export const postProfile = async (data:any) => {
   try {
     const res = await api.post(`profiles`, data);

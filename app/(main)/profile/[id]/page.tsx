@@ -1,6 +1,6 @@
 import { apiConfig } from "@/apiConfig";
 import {
-  getProfileById,
+  getProfileByIdInProfile,
   getUserFollowers,
   getUserFollowings,
   getUsers,
@@ -53,7 +53,7 @@ interface ProfilePageParams {
 
 const ProfileContainerPage = async ({ params }: ProfilePageParams) => {
   const usersDataPromise = await getUsers();
-  const profilePromise = await getProfileById(params.id);
+  const profilePromise = await getProfileByIdInProfile(params.id);
   const userFollowersPromise = await getUserFollowers(params.id);
   const userFollowingsPromise = await getUserFollowings(params.id);
 
