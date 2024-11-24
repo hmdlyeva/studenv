@@ -59,3 +59,21 @@ export const verifyOtpResend = async (email: string) => {
     return null;
   }
 };
+
+export const forgotPassword = async (email: string) => {
+  try {
+    const response = await axios.post(`${baseURL}/forgot-password`, {email:email});
+    return response;
+  } catch (error: any) {
+    return error;
+  }
+};
+
+export const resetPassword = async (new_password: string, token:string) => {
+  try {
+    const response = await axios.post(`${baseURL}/reset-password`, {new_password:new_password, token:token});
+    return response;
+  } catch (error: any) {
+    return error;
+  }
+};

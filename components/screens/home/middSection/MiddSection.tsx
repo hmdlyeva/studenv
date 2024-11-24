@@ -246,13 +246,13 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
 
   return (
     <div className="middle flex min-h-screen flex-col gap-6 pb-8 mx-auto px-4 lg:px-0 lg:w-1/2 tb:w-[68%] w-full">
-      <div
-        className={`card pt-[28px] pb-4 sticky md:top-[132px] top-16 z-10 ${
+      {/* <div
+        className={`card pt-[28px] pb-4 z-10 ${
           theme === "white" ? "bg-whitesecond" : "bg-secondblack"
         }`}
-      >
+      > */}
         <div
-          className={`card p-4 border rounded-2xl ${
+          className={`card md:mt-40 mt-24 p-4 border rounded-2xl ${
             theme === "white" ? "bg-white" : "bg-black border-gray-600"
           } ${theme === "white" ? "text-black" : "text-white"}`}
         >
@@ -452,9 +452,9 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
             )}
           </div>
         </div>
-      </div>
+      {/* </div> */}
 
-      <div className="md:mt-[108px] mt-12 flex flex-col gap-6 md:mb-0 mb-14">
+      <div className="flex flex-col gap-6 md:mb-0 mb-14">
         {discussions &&
           discussions
             .filter((post: IDiscussion) =>

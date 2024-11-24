@@ -1,23 +1,40 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { login, verifyOtp, verifyOtpResend } from "@/api/auth";
+import { forgotPassword, login, verifyOtpResend } from "@/api/auth";
 import { useRouter } from "next/navigation";
-import { postCompanies, postProfile } from "@/api/common";
-import Image from "next/image";
+import {
+  getProfileByIdInProfile,
+  postCompanies,
+  postProfile,
+} from "@/api/common";
+import OtpModal from "@/components/screens/login/otpModal";
+import ResetModal from "@/components/screens/login/resetPassword";
+import ProfileModal from "@/components/screens/login/profileModal";
+import DateOfBirthModal from "@/components/screens/login/dateOfBirthModal";
+import UniversityDetailModal from "@/components/screens/login/universityDetailModal";
+import CreatingModal from "@/components/screens/login/creatingModal";
 
 const Login = () => {
   const [errorLogin, setErrorLogin] = useState("");
   const [notVerifyed, setNotVerifyed] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
-  const [otpInputFilled, setOtpInputFilled] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [dateOfBirthModal, setDateOfBirthModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
+  const [universityDetailModal, setUniversityDetailModal] = useState(false);
+  const [university, setUniversity] = useState("");
+  const [yearOfStudy, setYearOfStudy] = useState("");
+  const [studyLang, setStudyLang] = useState("");
 
+  const [createModal, setCreateModal] = useState(false);
+  const [newPostImage, setPostImage] = useState("");
+  const [resetModal, setResetModal] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("")
   const router = useRouter();
 
   const formik = useFormik({
@@ -45,32 +62,43 @@ const Login = () => {
         const response = await login(data);
         if (response?.status === 200) {
           if (typeof window !== "undefined") {
-            localStorage.setItem(
-              "accessToken",
-              response.data.access_token
-            );
+            localStorage.setItem("accessToken", response.data.access_token);
             localStorage.setItem("userId", response.data.user_id);
             localStorage.setItem("userRole", response.data.role);
           }
 
           if (response.data.role === "Student") {
-            await postProfile({
-              sex: "",
-              study_language: "",
-              job_status: "",
-              university: "",
-              year_of_study: "",
-              date_of_birth: "",
-              bio: "",
-              score: 0,
-              phone_number: "",
-              profile_photo: "",
-              cv_url: "",
-              address: "",
-              social_links: "",
-              user_id: response.data.user_id,
-            });
-            router.push("/");
+            const isProfiled = await getProfileByIdInProfile(
+              response.data.user_id
+            );
+            if (isProfiled) {
+              router.push("/");
+            } else {
+              setProfileModal(true);
+              setUserId(response.data.user_id)
+              if (createModal) {
+               const resp =  await postProfile({
+                  sex: "",
+                  study_language: studyLang || "",
+                  job_status: "",
+                  university: university || "",
+                  year_of_study: yearOfStudy || "",
+                  date_of_birth: dateOfBirth || "",
+                  bio: "",
+                  score: 0,
+                  phone_number: "",
+                  profile_photo: newPostImage || "",
+                  cv_url: "",
+                  address: "",
+                  social_links: "",
+                  user_id: response.data.user_id,
+                });
+                if (resp.status === 200) {
+                  setCreateModal(false);
+                  router.push("/");
+                }
+              }
+            }
           } else if (response.data.role === "Company") {
             await postCompanies({
               name: "",
@@ -92,6 +120,7 @@ const Login = () => {
           setNotVerifyed(true);
         } else if (response.status !== 200) {
           setErrorLogin(response.response.data.detail);
+          setConfirmEmail(values.username);
         }
       } catch (error) {
         console.error("Login failed", error);
@@ -102,7 +131,6 @@ const Login = () => {
   const handleVerify = async () => {
     setErrorLogin("");
     setError(null);
-    setOtpCode(["", "", "", "", "", ""]);
     const response = await verifyOtpResend(confirmEmail);
     if (response?.status === 200) {
       setIsModalOpen(true);
@@ -112,44 +140,17 @@ const Login = () => {
     }
   };
 
-  const formatEmail = (email: string) => {
-    if (!email) return "";
-    const [username, domain] = email.split("@");
-    return `${username.slice(0, 2)}**@${domain.slice(-1)}`;
-  };
-
-  const handleOtpChange = (index: number, value: string) => {
-    const newOtpCode = [...otpCode];
-    newOtpCode[index] = value.slice(-1);
-    setOtpCode(newOtpCode);
-    setOtpInputFilled(newOtpCode.every((digit) => digit !== ""));
-
-    if (value && index < otpCode.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyDown = (index: number, event: { key: string }) => {
-    if (event.key === "Backspace" && otpCode[index] === "") {
-      if (index > 0) {
-        inputRefs.current[index - 1]?.focus();
-      }
-    }
-  };
-
-  const handleSubmitOtp = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-    const otpString = otpCode.join("");
-    const result = await verifyOtp(confirmEmail, otpString);
-    setLoading(false);
-    if (result?.status === 200) {
-      router.refresh();
-    } else if (result.status !== 200) {
-      setError(result.response.data.detail);
+  const handleResendPassword = async () => {
+    console.log(confirmEmail);
+    const resp = await forgotPassword(confirmEmail);
+    console.log(resp);
+    setToken("");
+    if (resp.status === 200) {
+      setIsModalOpen(true);
+      setToken(resp.data.access_token);
+      // setResetModal(true);
     } else {
-      console.log("Error");
+      console.log(resp);
     }
   };
 
@@ -285,25 +286,17 @@ const Login = () => {
                 ) : null}
               </div>
 
-              {/* <div className="flex gap-2 cursor-pointer font-medium sm:px-3">
-                <input
-                  checked={checked}
-                  onChange={(e) => setChecked(e.target.checked)}
-                  type="checkbox"
-                  id="agree"
-                  name="agree"
-                />
-                <p>
-                  <>
-                    {`I agree to the `}
-                    <span className="underline text-blue-400 cursor-pointer">
-                      Terms & Privacy
-                    </span>
-                  </>
-                </p>
-              </div> */}
-
               <div className="w-full flex flex-col gap-3">
+                <div className="flex gap-1">
+                  <span>Forgot Your Password ?</span>
+                  <span
+                    className="text-blue-600 cursor-pointer hover:text-blue-800"
+                    onClick={handleResendPassword}
+                  >
+                    Reset
+                  </span>
+                </div>
+
                 <div className="text-red-500">{errorLogin && errorLogin}</div>
                 {notVerifyed ? (
                   <div
@@ -335,100 +328,57 @@ const Login = () => {
         </div>
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
-
-          <div className="flex flex-col items-center bg-white p-10 rounded-2xl z-50 lg:w-1/2 md:w-2/3 sm:w-3/4 w-4/5 relative">
-            <div
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 left-6 cursor-pointer"
-            >
-              <svg
-                enableBackground="new 0 0 15 26"
-                height="20px"
-                id="Layer_1"
-                version="1.1"
-                viewBox="0 0 15 26"
-                width="12px"
-                xmlSpace="preserve"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-              >
-                <polygon
-                  fill="#747474"
-                  points="12.885,0.58 14.969,2.664 4.133,13.5 14.969,24.336 12.885,26.42 2.049,15.584 -0.035,13.5"
-                />
-              </svg>
-            </div>
-
-            <Image
-              width={300}
-              height={300}
-              alt="logo"
-              src={"/images/biglogo.png"}
-            />
-
-            <h1 className="sm:text-lg text-base font-bold">
-              Please Confirm Your Email
-            </h1>
-            <p className="text-center">
-              We sent an OTP code to {formatEmail(confirmEmail)} right now.
-            </p>
-
-            <form onSubmit={handleSubmitOtp}>
-              <div className="flex gap-1 py-5">
-                {otpCode.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={(el: HTMLInputElement | null): void => {
-                      inputRefs.current[index] = el;
-                    }}
-                    id={`otp-input-${index}`}
-                    type="text"
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    maxLength={1}
-                    className="border w-9 h-9 rounded-lg text-center focus:outline-none focus:ring-0 focus:border-blue-500"
-                  />
-                ))}
-              </div>
-              {error && (
-                <div className="text-red-500 text-center mx-auto w-full">
-                  {error}
-                </div>
-              )}
-
-              <div className="flex justify-center gap-1">
-                {error ? (
-                  <div
-                    className="text-center cursor-pointer border w-2/3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300"
-                    onClick={handleVerify}
-                  >
-                    Resend
-                  </div>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={loading || !otpInputFilled}
-                    className="border w-2/3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300"
-                  >
-                    {loading ? "Sending..." : "Confirm"}
-                  </button>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="border w-2/3 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <OtpModal
+          token={token}
+          setIsModalOpen={setIsModalOpen}
+          confirmEmail={confirmEmail}
+          setNotVerifyed={setNotVerifyed}
+          setErrorLogin={setErrorLogin}
+          setResetModal={setResetModal}
+        />
       )}
+
+      {resetModal && (
+        <ResetModal
+          setToken={setToken}
+          token={token}
+          setResetModal={setResetModal}
+          error={error}
+        />
+      )}
+
+      {profileModal && (
+        <ProfileModal
+          setDateOfBirthModal={setDateOfBirthModal}
+          setProfileModal={setProfileModal}
+          setPostImage={setPostImage}
+          newPostImage={newPostImage}
+        />
+      )}
+
+      {dateOfBirthModal && (
+        <DateOfBirthModal
+          dateOfBirth={dateOfBirth}
+          setDateOfBirth={setDateOfBirth}
+          setDateOfBirthModal={setDateOfBirthModal}
+          setUniversityDetailModal={setUniversityDetailModal}
+        />
+      )}
+
+      {universityDetailModal && (
+        <UniversityDetailModal
+          setUniversityDetailModal={setUniversityDetailModal}
+          setCreateModal={setCreateModal}
+          setUniversity={setUniversity}
+          setYearOfStudy={setYearOfStudy}
+          setStudyLang={setStudyLang}
+          dateOfBirth={dateOfBirth}
+          newPostImage={newPostImage}
+          userId={userId}
+          createModal={createModal}
+        />
+      )}
+      {createModal && <CreatingModal />}
     </div>
   );
 };

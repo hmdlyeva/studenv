@@ -84,12 +84,12 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       await userLikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchLikesCount(post.discussion_id);
-      fetchLikedDiscussions(post.discussion_id);
+      fetchLikedDiscussions(post.user_id);
     } else {
       await userUnlikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => [...prev, disId]);
       fetchLikesCount(post.discussion_id);
-      fetchLikedDiscussions(post.discussion_id);
+      fetchLikedDiscussions(post.user_id);
     }
   };
   const handleSaveDiscussionActions = async (userId: string, disId: string) => {
@@ -98,12 +98,12 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       await userSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchSavesCount(post.discussion_id);
-      fetchSavedDiscussions(post.discussion_id);
+      fetchSavedDiscussions(post.user_id);
     } else {
       await userUnSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => [...prev, disId]);
       fetchSavesCount(post.discussion_id);
-      fetchSavedDiscussions(post.discussion_id);
+      fetchSavedDiscussions(post.user_id);
     }
   };
   useEffect(() => {
@@ -134,9 +134,9 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
     }
   }, [users]);
 
-  const fetchLikedDiscussions = async (discussionId: string) => {
+  const fetchLikedDiscussions = async (userId: string) => {
     try {
-      const resp = await userAllLikedDiscussion(discussionId);
+      const resp = await userAllLikedDiscussion(userId);
       if (resp) {
         setLikedDiscussions(
           resp?.map((discussion: IDiscussion) => discussion.discussion_id)
@@ -147,9 +147,9 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
     }
   };
 
-  const fetchSavedDiscussions = async (discussionId: string) => {
+  const fetchSavedDiscussions = async (userId: string) => {
     try {
-      const resp = await userAllSavedDiscussion(discussionId);
+      const resp = await userAllSavedDiscussion(userId);
       if (resp) {
         setSavedDiscussions(
           resp?.map((discussion: IDiscussion) => discussion.discussion_id)

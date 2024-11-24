@@ -304,16 +304,16 @@ const Navbar = ({ url }: IProps) => {
                           ? 32
                           : userRole === "Company"
                           ? 35
-                          : 50
+                          : 40
                       }
                       height={
                         userRole === "Guest"
                           ? 32
                           : userRole === "Company"
                           ? 35
-                          : 50
+                          : 40
                       }
-                      className="rounded-full"
+                      className="rounded-full ml-1"
                     />
                     <div
                       className={`cursor-pointer ${userModal && "relative"}`}

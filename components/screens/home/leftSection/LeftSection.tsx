@@ -96,7 +96,7 @@ const LeftSection = ({ theme, communitiesPopular, latestEvents }: IProps) => {
             >
               <div className="img bg-slate-300 rounded-md w-16 h-16 overflow-hidden">
                 <img
-                  src={event.img_url}
+                  src={event.img_url || "images/Image-not-found.png"}
                   alt=""
                   className="object-cover w-full h-full"
                 />
