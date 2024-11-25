@@ -25,10 +25,8 @@ const Card = ({
   selectedCommunity,
 }: IProps) => {
   const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
-  const [userRole, setUserRole] = useState<string>("");
+  // const [userRole, setUserRole] = useState<string>("");
   const [joinCommunityModal, setJoinCommunityModal] = useState(false);
-  const [addCommunityModal, setAddCommunityModal] = useState(false);
-  const [join, setJoin] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -38,7 +36,7 @@ const Card = ({
       if (userId && userRole) {
         try {
           let resp;
-          setUserRole(userRole);
+          // setUserRole(userRole);
 
           if (userRole === "Student") {
             resp = await getProfileById(userId);

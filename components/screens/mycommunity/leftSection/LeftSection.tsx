@@ -26,7 +26,7 @@ const LeftSection = ({
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [newPostImage, setPostImage] = useState("");
   const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
-  const [userRole, setUserRole] = useState<string>("");
+  // const [userRole, setUserRole] = useState<string>("");
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
   const [communitiesData, setCommunitiesData] = useState<ICommunity[]>([]);
@@ -39,7 +39,7 @@ const LeftSection = ({
       if (userId && userRole) {
         try {
           let resp;
-          setUserRole(userRole);
+          // setUserRole(userRole);
 
           if (userRole === "Student") {
             resp = await getProfileById(userId);

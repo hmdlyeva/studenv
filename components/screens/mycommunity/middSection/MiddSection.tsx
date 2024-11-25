@@ -34,7 +34,7 @@ const MiddSection = ({ theme, users, selectedCommunity, profiles }: IProps) => {
   const [showYtInp, setShowYtInp] = useState(false);
   const [content, setContent] = useState("");
   const [newPostImage, setPostImage] = useState("");
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [loading, setLoading] = useState<boolean>(true);
   const { searchedItem } = useStore();
   
   const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
@@ -45,7 +45,7 @@ const MiddSection = ({ theme, users, selectedCommunity, profiles }: IProps) => {
       const userRole = localStorage.getItem("userRole");
 
       if (userId && userRole) {
-        setLoading(false);
+        // setLoading(false);
         try {
           let resp;
           setUserRole(userRole);
@@ -76,7 +76,7 @@ const MiddSection = ({ theme, users, selectedCommunity, profiles }: IProps) => {
           console.error("Data fetch sırasında hata:", error);
         }
       } else {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
