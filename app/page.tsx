@@ -1,4 +1,4 @@
-import { getCommunitiesPopular, getDiscussions, getEvents, getLatestEvents, getUpcomingEvents, getUsers, getWeeklyPopularTags } from "@/api/common";
+import { getCommunitiesPopular, getDiscussions, getEvents, getLatestEvents, getProfile, getUpcomingEvents, getUsers, getWeeklyPopularTags } from "@/api/common";
 import { apiConfig } from "@/apiConfig";
 import LoadingContainer from "@/container/loadingContainer";
 import { Metadata } from "next";
@@ -49,9 +49,10 @@ export default async function Home() {
   const latestEventsDataPromise = await getLatestEvents();
   const upcomingEventsDataPromise = await getUpcomingEvents();
   const weeklyPopularTagsDataPromise = await getWeeklyPopularTags();
-  const [upcomingEvents, weeklyPopularTags, latestEvents, users, events, discussions, communitiesPopular] = await Promise.all([upcomingEventsDataPromise, weeklyPopularTagsDataPromise,latestEventsDataPromise,usersDataPromise, eventsDataPromise, discussionsDataPromise, communitiesPopularDataPromise]) 
+  const profilesPromise = await getProfile();
+  const [profiles,upcomingEvents, weeklyPopularTags, latestEvents, users, events, discussions, communitiesPopular] = await Promise.all([profilesPromise,upcomingEventsDataPromise, weeklyPopularTagsDataPromise,latestEventsDataPromise,usersDataPromise, eventsDataPromise, discussionsDataPromise, communitiesPopularDataPromise]) 
   return (
     
-      <HomeContainer upcomingEvents={upcomingEvents} weeklyPopularTags={weeklyPopularTags} users={users} events={events} discussions={discussions} communitiesPopular={communitiesPopular} latestEvents={latestEvents}/>
+      <HomeContainer profiles={profiles} upcomingEvents={upcomingEvents} weeklyPopularTags={weeklyPopularTags} users={users} events={events} discussions={discussions} communitiesPopular={communitiesPopular} latestEvents={latestEvents}/>
   );
 }

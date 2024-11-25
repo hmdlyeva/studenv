@@ -10,7 +10,7 @@ interface IProps {
 const LeftSection = ({ theme , companies, setClickedCompany}: IProps) => {
 
   return (
-    <div className="left w-[95%] md:w-2/5 mx-auto flex flex-col">
+    <div className="left w-[95%] md:w-2/5 mx-auto flex flex-col mt-32">
       <div
         className={`card border border-t-0 ${
           theme === "white" ? "bg-white" : "bg-dark border-gray-600"
@@ -19,10 +19,12 @@ const LeftSection = ({ theme , companies, setClickedCompany}: IProps) => {
         <div className="channels h-auto max-h-[93vh] md:h-auto md:overflow-y-auto overflow-x-auto flex md:flex-col flex-row md:gap-1 gap-1">
           {companies && companies?.map((comp, i) => (
             <div
-              key={i} onClick={()=>setClickedCompany(comp.id)}
+              key={i} onClick={()=>setClickedCompany(comp.user_id)}
               className={`channel p-4 ps-6 min-w-[160px] flex flex-col items-center gap-4 md:flex-row cursor-pointer ${theme === "white" ? "hover:bg-slate-50": "hover:bg-zinc-900"}`}
             >
-              <div className="img bg-slate-300 rounded-full w-12 h-12"></div>
+              <div className="img bg-slate-300 rounded-full w-12 h-12 overflow-hidden">
+                <img src={comp.img_url} alt="" className="w-full h-full object-cover"/>
+              </div>
               <div className="detail">
                 <h3
                   className={`text-sm ${

@@ -20,17 +20,28 @@ import SavedIcon from "@/components/ui/SavedIcon";
 import SaveIcon from "@/components/ui/SaveIcon";
 import ShareIcon from "@/components/ui/ShareIcon";
 import ThreeDot from "@/components/ui/ThreeDot";
-import { IComment, IDiscussion, IUser } from "@/types/common.type";
+import { IComment, IDiscussion, IProfile, IUser } from "@/types/common.type";
 import React, { useEffect, useState } from "react";
 
 interface IProps {
   post: IDiscussion;
-  userContent: IUser | undefined;
+  userContent: IProfile | undefined;
   theme: string;
   users: IUser[];
+  userContentGuest: IUser | undefined;
+  discussions: IDiscussion[];
+  setDiscussions: React.Dispatch<React.SetStateAction<IDiscussion[]>>;
 }
 
-const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
+const DiscussionPost = ({
+  post,
+  userContent,
+  theme,
+  users,
+  userContentGuest,
+  discussions,
+  setDiscussions
+}: IProps) => {
   const [userData, setUserData] = useState<IUser>();
   const [selectedDiscussionId, setSelectedDiscussionId] = useState("");
   const [likesCount, setLikesCount] = useState<Record<string, number>>({});
@@ -77,19 +88,23 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
 
   const handleDelete = async (id: string) => {
     await deleteDiscussion(id);
+    const newDiscussionsData = discussions.filter(
+      (dis) => dis.discussion_id !== id
+    );
+    setDiscussions(newDiscussionsData);
   };
   const handleLikeDiscussionActions = async (userId: string, disId: string) => {
     const isLiked = likedDiscussions.includes(disId);
     if (!isLiked) {
       await userLikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => prev.filter((id) => id !== disId));
+      fetchLikedDiscussions(userId);
       fetchLikesCount(post.discussion_id);
-      fetchLikedDiscussions(post.user_id);
     } else {
       await userUnlikeDiscussion(userId, disId);
       setLikedDiscussions((prev) => [...prev, disId]);
+      fetchLikedDiscussions(userId);
       fetchLikesCount(post.discussion_id);
-      fetchLikedDiscussions(post.user_id);
     }
   };
   const handleSaveDiscussionActions = async (userId: string, disId: string) => {
@@ -98,12 +113,12 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       await userSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => prev.filter((id) => id !== disId));
       fetchSavesCount(post.discussion_id);
-      fetchSavedDiscussions(post.user_id);
+      fetchSavedDiscussions(userId);
     } else {
       await userUnSaveDiscussion(userId, disId);
       setSavedDiscussions((prev) => [...prev, disId]);
       fetchSavesCount(post.discussion_id);
-      fetchSavedDiscussions(post.user_id);
+      fetchSavedDiscussions(userId);
     }
   };
   useEffect(() => {
@@ -170,7 +185,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
       content,
       discussion_score: 0,
       discussion_id: id,
-      user_id: userId,
+      user_id: userId || userContentGuest?.user_id,
     };
 
     try {
@@ -250,7 +265,13 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
         <div className="left flex sm:gap-4 gap-2">
           <div className="img w-14 h-14 rounded-lg bg-slate-400 cursor-pointer overflow-hidden">
             <img
-              src={"/images/hamida.jpg"}
+              src={
+                userContent && userContent.profile_photo
+                  ? userContent.profile_photo
+                  : userContentGuest && userContentGuest.img_url
+                  ? userContentGuest.img_url
+                  : "/images/student-no-image.webp"
+              }
               alt=""
               className="object-cover w-full h-full"
             />
@@ -266,11 +287,17 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
             <div className="user flex gap-2 items-center">
               <div className="flex flex-row items-center gap-1">
                 <p className="text-blue-600 cursor-pointer truncate text-base mob:block hidden">
-                  {userContent ? userContent.name : "Unknown User"}
+                  {userContent
+                    ? userContent.name
+                    : userContentGuest
+                    ? userContentGuest.name
+                    : "Unknown User"}
                 </p>
                 <p className="text-blue-600 cursor-pointer truncate text-base mob:hidden block">
                   {userContent
                     ? userContent.name.split(" ")[0]
+                    : userContentGuest
+                    ? userContentGuest.name.split(" ")[0]
                     : "Unknown User"}
                 </p>
                 <p className="text-sm text-gray-400">
@@ -284,10 +311,10 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
           className="sm:rotate-90 sm:pr-10 rotate-0 cursor-pointer"
           onClick={() => {
             setSelectedDiscussionId(post.discussion_id);
-            const userInfo = JSON.parse(
-              localStorage.getItem("userInfo") || "{}"
-            );
-            if (post.user_id === userInfo.user_id) {
+            if (
+              post.user_id === userContent?.user_id ||
+              userContentGuest?.user_id
+            ) {
               alert("Are you sure? this post will be delete");
               handleDelete(post.discussion_id);
             } else {
@@ -347,7 +374,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => {
               handleLikeDiscussionActions(
-                userData?.user_id || "",
+                userData?.user_id || userContentGuest?.user_id || "",
                 post.discussion_id
               );
             }}
@@ -377,7 +404,7 @@ const DiscussionPost = ({ post, userContent, theme, users }: IProps) => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => {
               handleSaveDiscussionActions(
-                userData?.user_id || "",
+                userData?.user_id || userContentGuest?.user_id || "",
                 post.discussion_id
               );
             }}

@@ -1,7 +1,7 @@
 import Dashboard from "@/components/screens/dashboard";
 import Navbar from "@/components/layout/navbar/Navbar";
 import React from "react";
-import { ICommunityPopular, IDiscussion, IEvent, ITag, IUser } from "@/types/common.type";
+import { ICommunityPopular, IDiscussion, IEvent, IProfile, ITag, IUser } from "@/types/common.type";
 
 interface IProps {
   users: IUser[];
@@ -11,14 +11,15 @@ interface IProps {
   latestEvents:IEvent[];
   weeklyPopularTags:ITag[];
   upcomingEvents:IEvent[];
+  profiles:IProfile[];
 }
 
-const HomeContainer = ({users, events, discussions, communitiesPopular, latestEvents, weeklyPopularTags, upcomingEvents}: IProps) => {
+const HomeContainer = ({users, events, discussions, communitiesPopular, latestEvents, weeklyPopularTags, upcomingEvents,profiles}: IProps) => {
   
   return (
     <main>
       <Navbar url="/"/>
-      <Dashboard upcomingEvents={upcomingEvents} users={users} discussions={discussions} events={events} communitiesPopular={communitiesPopular} latestEvents={latestEvents} weeklyPopularTags={weeklyPopularTags}/>
+      <Dashboard profiles={profiles} upcomingEvents={upcomingEvents} users={users} discussions={discussions} events={events} communitiesPopular={communitiesPopular} latestEvents={latestEvents} weeklyPopularTags={weeklyPopularTags}/>
     </main>
   );
 };

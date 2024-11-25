@@ -1,7 +1,7 @@
 "use client";
 import SaveIcon from "@/components/ui/SaveIcon";
 import { ICompany } from "@/types/common.type";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 
 const postData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 type Props = {
@@ -11,15 +11,19 @@ type Props = {
 
 const links = ["Şirkət haqqında", "Son iş elanları"];
 const MiddSection = ({ theme, clickedCompany }: Props) => {
-
-
   const [clickledBtn, setclickledBtn] = useState(0);
 
   return (
-    <div className="middle md:w-4/5 h-full w-[95%] mx-auto">
+    <div className="middle md:w-4/5 h-full w-[95%] mx-auto mt-32">
       <div className="h-full flex flex-col">
         <div className="bg-slate-200 w-full h-64 relative">
-          <div className="bg-slate-300 w-32 h-32 rounded-lg absolute -bottom-4 left-8"></div>
+          <div className="bg-slate-300 w-32 h-32 rounded-lg absolute -bottom-4 left-8 overflow-hidden">
+            <img
+              src={clickedCompany?.img_url}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
 
         <div className="detail p-8">
@@ -69,7 +73,9 @@ const MiddSection = ({ theme, clickedCompany }: Props) => {
               >
                 Şirkət haqqında
               </h3>
-              <p className="text-sm text-gray-500">{clickedCompany?.description}</p>
+              <p className="text-sm text-gray-500">
+                {clickedCompany?.description}
+              </p>
 
               <div className="detail flex gap-8">
                 <div className="left w-1/2">
@@ -88,15 +94,15 @@ const MiddSection = ({ theme, clickedCompany }: Props) => {
                 <div className="right flex flex-col gap-3 w-1/2">
                   <h3>Ünvan</h3>
                   <p className="text-sm text-gray-400">
-                    AZ1005, Bakı ş., Səbail r-nu, Yusif Məmmədəliyev küç. 13
+                    {clickedCompany?.address}
                   </p>
                   <h3>Əlaqə nömrəsi</h3>
                   <p className="text-sm text-gray-400">
-                    *8123 / (+994 12) 496 50 04 , (+994 12) 496 51 00
+                    {clickedCompany?.contact}
                   </p>
                   <h3>Vebsayt</h3>
                   <p className="text-sm text-gray-400">
-                    www.pashabank.az/lang ,az/
+                    {clickedCompany?.website}
                   </p>
                 </div>
               </div>

@@ -43,7 +43,7 @@ const heroLinks = [
     icon2: <CompanyIcon color="#a2a2a2" />,
   },
   {
-    title: "Resouces",
+    title: "Resources",
     url: "/resources",
     icon: <ResourceIcon />,
     icon2: <ResourceIcon color="#a2a2a2" />,
@@ -91,7 +91,7 @@ const heroLinksGuest = [
     icon2: <UserStrikeIcon color="#a2a2a2" />,
   },
   {
-    title: "Resouces",
+    title: "Resources",
     url: "/resources",
     icon: <ResourceIcon />,
     icon2: <ResourceIcon color="#a2a2a2" />,
@@ -557,6 +557,9 @@ const Navbar = ({ url }: IProps) => {
                               ? "bg-white"
                               : "bg-dark border-gray-600"
                           } ${theme === "white" ? "text-black" : "text-white"}`}
+                          onClick={()=>{
+                            setFields({addChannel:true})
+                          }}
                         >
                           <PlusIcon /> add channel
                         </div>

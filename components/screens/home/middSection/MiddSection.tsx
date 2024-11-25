@@ -1,5 +1,11 @@
 "use client";
-import { postDiscussions, upload } from "@/api/common";
+import {
+  getCompanyById,
+  getProfileById,
+  getUserById,
+  postDiscussions,
+  upload,
+} from "@/api/common";
 import DiscussionPost from "@/components/common/discussionPost";
 import Camera from "@/components/ui/Camera";
 import FolderIcon from "@/components/ui/FolderIcon";
@@ -7,16 +13,17 @@ import ImageIcon from "@/components/ui/ImageIcon";
 import LocationIcon from "@/components/ui/LocationIcon";
 import VideoIcon from "@/components/ui/VideoIcon";
 import { useStore } from "@/hooks/store/store";
-import { IDiscussion, IUser } from "@/types/common.type";
+import { ICompany, IDiscussion, IProfile, IUser } from "@/types/common.type";
 import React, { useEffect, useRef, useState } from "react";
 
 interface Props {
   theme: string;
   users: IUser[];
-  discussions: IDiscussion[];
+  discussionsData: IDiscussion[];
+  profiles:IProfile[]
 }
 
-const MiddSection = ({ theme, users, discussions }: Props) => {
+const MiddSection = ({ theme, users, discussionsData ,profiles}: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [isActive, setIsActive] = useState(false);
@@ -28,7 +35,58 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
   const [showYtInp, setShowYtInp] = useState(false);
   const [content, setContent] = useState("");
   const [newPostImage, setPostImage] = useState("");
+  const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
+  const [userRole, setUserRole] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const { searchedItem } = useStore();
+
+  const [discussions, setDiscussions] = useState<IDiscussion[]>([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      const userRole = localStorage.getItem("userRole");
+
+      if (userId && userRole) {
+        setLoading(false);
+        try {
+          let resp;
+          setUserRole(userRole);
+
+          if (userRole === "Student") {
+            resp = await getProfileById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("profile yoxdu bu studentin?", resp);
+            }
+          } else if (userRole === "Company") {
+            resp = await getCompanyById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("company datasi yoxdu bu companynin?", resp);
+            }
+          } else if (userRole === "Guest") {
+            resp = await getUserById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("user datasi yoxdu bu guestin?", resp);
+            }
+          }
+        } catch (error) {
+          console.error("Data fetch sırasında hata:", error);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+
+    setDiscussions(discussionsData)
+  }, []);
 
   const handleCameraAccess = async () => {
     if (isActive) {
@@ -231,7 +289,14 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
         : "",
     };
 
-    await postDiscussions(newDiscussion);
+    try {
+      const response = await postDiscussions(newDiscussion);
+      if (response?.status === 200) {
+        setDiscussions((prev) => [...prev, response?.data]);
+      }
+    } catch (error) {
+      console.error("Error posting discussion:", error);
+    }
     setContent("");
     setPostImage("");
     setShowYtInp(false);
@@ -251,150 +316,160 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
           theme === "white" ? "bg-whitesecond" : "bg-secondblack"
         }`}
       > */}
-        <div
-          className={`card md:mt-40 mt-24 p-4 border rounded-2xl ${
-            theme === "white" ? "bg-white" : "bg-black border-gray-600"
-          } ${theme === "white" ? "text-black" : "text-white"}`}
-        >
-          <div className="up flex gap-2">
-            <div className="img rounded-lg h-[38px] mt-[1px] w-10 mini:block hidden bg-slate-400 cursor-pointer overflow-hidden">
-              <img
-                src={"/images/hamida.jpg"}
-                alt=""
-                className="object-cover h-full"
-              />
-            </div>
-            <input
-              type="text"
-              name=""
-              id=""
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Share or ask something to everyone!"
-              className={`border-2 pe-2 ps-4 py-[6px] rounded-lg w-full ${
-                theme === "white"
-                  ? "bg-whitesecond"
-                  : "bg-secondblack border-gray-600"
-              }`}
+      <div
+        className={`card md:mt-40 mt-24 p-4 border rounded-2xl ${
+          theme === "white" ? "bg-white" : "bg-black border-gray-600"
+        } ${theme === "white" ? "text-black" : "text-white"}`}
+      >
+        <div className="up flex gap-2">
+          <div className="img rounded-lg h-[38px] mt-[1px] w-10 mini:block hidden bg-slate-400 cursor-pointer overflow-hidden">
+            <img
+              src={
+                userRole === "Student" && userData?.profile_photo
+                  ? userData.profile_photo
+                  : userRole === "Company" && userData?.img_url
+                  ? userData.img_url
+                  : userRole === "Guest"
+                  ? "/images/guest.png"
+                  : userRole === "Student"
+                  ? "/images/student-no-image.webp"
+                  : "/images/Image-not-found.png"
+              }
+              alt=""
+              className="object-cover h-full"
             />
-            <button
-              onClick={handleSubmit}
-              className={`border-2 p-[12px] rounded-lg ${
-                theme === "white"
-                  ? "bg-whitesecond hover:bg-gray-200"
-                  : "bg-secondblack border-gray-600 text-white"
-              }`}
-            >
-              <img src="/images/icons/sendmsg.svg" alt="" />
-            </button>
           </div>
-          <div className="icons pt-2 pb-2">
-            <ul
-              className={`max-w-[90%] m-auto overflow-x-auto scrollbar-none flex gap-4 lg:gap-8 tb:gap-3 md:gap-5 p-3 pb-0 mini:justify-center justify-evenly ${
-                theme === "white" ? "text-black" : "text-white"
-              }`}
+          <input
+            type="text"
+            name=""
+            id=""
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Share or ask something to everyone!"
+            className={`border-2 pe-2 ps-4 py-[6px] rounded-lg w-full ${
+              theme === "white"
+                ? "bg-whitesecond"
+                : "bg-secondblack border-gray-600"
+            }`}
+          />
+          <button
+            onClick={handleSubmit}
+            className={`border-2 p-[12px] rounded-lg ${
+              theme === "white"
+                ? "bg-whitesecond hover:bg-gray-200"
+                : "bg-secondblack border-gray-600 text-white"
+            }`}
+          >
+            <img src="/images/icons/sendmsg.svg" alt="" />
+          </button>
+        </div>
+        <div className="icons pt-2 pb-2">
+          <ul
+            className={`max-w-[90%] m-auto overflow-x-auto scrollbar-none flex gap-4 lg:gap-8 tb:gap-3 md:gap-5 p-3 pb-0 mini:justify-center justify-evenly ${
+              theme === "white" ? "text-black" : "text-white"
+            }`}
+          >
+            <li
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={handleCameraAccess}
             >
+              <Camera />
+              <div className="mini:block hidden">Camera</div>
+            </li>
+            <li
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={handleImageClick}
+            >
+              <ImageIcon />
+              <div className="mini:block hidden">Photo</div>
+            </li>
+            <li
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={handleVideoClick}
+            >
+              <VideoIcon />
+              <div className="mini:block hidden">Video</div>
+            </li>
+            <li
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={handlePdfClick}
+            >
+              <FolderIcon />
+              <div className="mini:block hidden">File</div>
+            </li>
+            <div className="xl:block lg:hidden mob:block hidden">
               <li
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={handleCameraAccess}
+                onClick={handleLocationClick}
               >
-                <Camera />
-                <div className="mini:block hidden">Camera</div>
+                <LocationIcon /> Location
               </li>
-              <li
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={handleImageClick}
-              >
-                <ImageIcon />
-                <div className="mini:block hidden">Photo</div>
-              </li>
-              <li
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={handleVideoClick}
-              >
-                <VideoIcon />
-                <div className="mini:block hidden">Video</div>
-              </li>
-              <li
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={handlePdfClick}
-              >
-                <FolderIcon />
-                <div className="mini:block hidden">File</div>
-              </li>
-              <div className="xl:block lg:hidden mob:block hidden">
-                <li
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={handleLocationClick}
-                >
-                  <LocationIcon /> Location
-                </li>
-              </div>
-            </ul>
+            </div>
+          </ul>
 
-            {cameraStream && isActive && (
-              <div className="w-full flex flex-col items-end">
-                <div className="camera-preview rounded-2xl overflow-hidden mt-3">
-                  <video
-                    ref={videoRef}
-                    className="w-full rounded-sm object-cover"
-                    autoPlay
-                    playsInline
-                    muted
-                  />
-                </div>
-
-                <button
-                  onClick={handleCaptureImage}
-                  className={`mt-4 border-2 p-2 rounded-lg right-0 flex items-center gap-1 ${
-                    theme === "white" ? "bg-gray-100" : "bg-gray-800 text-white"
-                  }`}
-                >
-                  take <Camera />
-                </button>
-              </div>
-            )}
-
-            <input
-              ref={imageInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleImageChange}
-            />
-            {selectedImage && (
-              <div
-                className="image-preview mt-4 w-[95%] mx-auto"
-                onClick={handleImageClick}
-              >
-                <img
-                  src={selectedImage}
-                  alt="Selected"
-                  className="object-cover w-full rounded-2xl cursor-pointer"
+          {cameraStream && isActive && (
+            <div className="w-full flex flex-col items-end">
+              <div className="camera-preview rounded-2xl overflow-hidden mt-3">
+                <video
+                  ref={videoRef}
+                  className="w-full rounded-sm object-cover"
+                  autoPlay
+                  playsInline
+                  muted
                 />
               </div>
-            )}
 
-            <input
-              ref={videoInputRef}
-              type="file"
-              accept="video/*"
-              style={{ display: "none" }}
-              onChange={handleVideoChange}
-            />
-            {videoSource && (
-              <div className="video-preview mt-4">
-                <video
-                  controls
-                  className="w-[95%] mx-auto object-cover rounded-2xl"
-                >
-                  <source src={videoSource} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            )}
+              <button
+                onClick={handleCaptureImage}
+                className={`mt-4 border-2 p-2 rounded-lg right-0 flex items-center gap-1 ${
+                  theme === "white" ? "bg-gray-100" : "bg-gray-800 text-white"
+                }`}
+              >
+                take <Camera />
+              </button>
+            </div>
+          )}
 
-            {/* {showYtInp && (
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+          />
+          {selectedImage && (
+            <div
+              className="image-preview mt-4 w-[95%] mx-auto"
+              onClick={handleImageClick}
+            >
+              <img
+                src={selectedImage}
+                alt="Selected"
+                className="object-cover w-full rounded-2xl cursor-pointer"
+              />
+            </div>
+          )}
+
+          <input
+            ref={videoInputRef}
+            type="file"
+            accept="video/*"
+            style={{ display: "none" }}
+            onChange={handleVideoChange}
+          />
+          {videoSource && (
+            <div className="video-preview mt-4">
+              <video
+                controls
+                className="w-[95%] mx-auto object-cover rounded-2xl"
+              >
+                <source src={videoSource} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
+
+          {/* {showYtInp && (
               <div className="youtube-url-input mt-4">
                 <input
                   type="text"
@@ -424,44 +499,47 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
               </div>
             )} */}
 
-            <input
-              ref={pdfInputRef}
-              type="file"
-              accept=".pdf"
-              style={{ display: "none" }}
-              onChange={handlePdfChange}
-            />
-            {pdfFileName && (
-              <div className="pdf-preview mt-4">
-                <p>{pdfFileName} has been uploaded.</p>
-              </div>
-            )}
+          <input
+            ref={pdfInputRef}
+            type="file"
+            accept=".pdf"
+            style={{ display: "none" }}
+            onChange={handlePdfChange}
+          />
+          {pdfFileName && (
+            <div className="pdf-preview mt-4">
+              <p>{pdfFileName} has been uploaded.</p>
+            </div>
+          )}
 
-            {showMap && (
-              <div className="map mt-4">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d97210.33214846!2d49.9122176!3d40.412774399999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2saz!4v1727381497381!5m2!1sen!2saz"
-                  width="100%"
-                  height="450"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
-            )}
-          </div>
+          {showMap && (
+            <div className="map mt-4">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d97210.33214846!2d49.9122176!3d40.412774399999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2saz!4v1727381497381!5m2!1sen!2saz"
+                width="100%"
+                height="450"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          )}
         </div>
+      </div>
       {/* </div> */}
 
       <div className="flex flex-col gap-6 md:mb-0 mb-14">
         {discussions &&
           discussions
             .filter((post: IDiscussion) =>
-              post.title.toLowerCase().includes(searchedItem.toLowerCase())
+              post?.title?.toLowerCase().includes(searchedItem.toLowerCase())
             )
             .map((post: IDiscussion, i: number) => {
-              const userContent = users.find(
+              const userContent = profiles.find(
+                (us: IProfile) => us.user_id === post.user_id
+              );
+              const userContentGuest = users.find(
                 (us: IUser) => us.user_id === post.user_id
               );
               return (
@@ -469,8 +547,11 @@ const MiddSection = ({ theme, users, discussions }: Props) => {
                   <DiscussionPost
                     post={post}
                     userContent={userContent}
+                    userContentGuest={userContentGuest}
                     theme={theme}
                     users={users}
+                    discussions={discussions}
+                    setDiscussions={setDiscussions}
                   />
                 </div>
               );

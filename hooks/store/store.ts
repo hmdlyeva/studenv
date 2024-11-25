@@ -4,6 +4,7 @@ import { create } from "zustand";
 export type Store = {
   searchedItem:string;
   statusModal: boolean;
+  addChannel:boolean;
   errorModal: boolean;
   modalMessage?: string;
   consultationSucces?:boolean;
@@ -15,6 +16,7 @@ export type Store = {
 const initialValue = {
   searchedItem:"",
   statusModal: false,
+  addChannel:false,
   errorModal: false,
   modalMessage: "",
   consultationSucces:false,

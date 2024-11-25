@@ -25,6 +25,7 @@ interface IProps {
   latestEvents: IEvent[];
   weeklyPopularTags: ITag[];
   upcomingEvents: IEvent[];
+  profiles:IProfile[];
 }
 const Dashboard = ({
   users,
@@ -34,6 +35,7 @@ const Dashboard = ({
   latestEvents,
   weeklyPopularTags,
   upcomingEvents,
+  profiles
 }: IProps) => {
   const [theme, setTheme] = useState("white");
   const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
@@ -102,7 +104,7 @@ const Dashboard = ({
             communitiesPopular={communitiesPopular}
             latestEvents={latestEvents}
           />
-          <MiddSection theme={theme} users={users} discussions={discussions} />
+          <MiddSection theme={theme} users={users} discussionsData={discussions} profiles={profiles}/>
           <RightSection
             theme={theme}
             events={events}

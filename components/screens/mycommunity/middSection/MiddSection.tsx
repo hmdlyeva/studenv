@@ -1,38 +1,110 @@
 "use client";
-import { discussionCommunity } from "@/api/common";
+import {
+  discussionCommunity,
+  getCompanyById,
+  getProfileById,
+  getUserById,
+  postDiscussions,
+  upload,
+} from "@/api/common";
 import DiscussionPost from "@/components/common/discussionPost";
 import Camera from "@/components/ui/Camera";
 import FolderIcon from "@/components/ui/FolderIcon";
 import ImageIcon from "@/components/ui/ImageIcon";
 import LocationIcon from "@/components/ui/LocationIcon";
 import VideoIcon from "@/components/ui/VideoIcon";
-import { IDiscussion, IUser } from "@/types/common.type";
+import { ICompany, IDiscussion, IProfile, IUser } from "@/types/common.type";
 import React, { useEffect, useRef, useState } from "react";
+import { useStore } from "@/hooks/store/store";
 interface IProps {
   theme: string;
   users: IUser[];
   selectedCommunity: string;
+  profiles: IProfile[];
 }
-const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
+const MiddSection = ({ theme, users, selectedCommunity, profiles }: IProps) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [videoSource, setVideoSource] = useState<string | null>(null);
-  const [youtubeUrl, setYoutubeUrl] = useState<string>("");
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState("");
   const [showMap, setShowMap] = useState(false);
   const [showYtInp, setShowYtInp] = useState(false);
   const [content, setContent] = useState("");
+  const [newPostImage, setPostImage] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const { searchedItem } = useStore();
+  
+  const [userData, setUserData] = useState<ICompany | IProfile | IUser>();
+  const [userRole, setUserRole] = useState<string>("");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      const userRole = localStorage.getItem("userRole");
+
+      if (userId && userRole) {
+        setLoading(false);
+        try {
+          let resp;
+          setUserRole(userRole);
+
+          if (userRole === "Student") {
+            resp = await getProfileById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("profile yoxdu bu studentin?", resp);
+            }
+          } else if (userRole === "Company") {
+            resp = await getCompanyById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("company datasi yoxdu bu companynin?", resp);
+            }
+          } else if (userRole === "Guest") {
+            resp = await getUserById(userId);
+            if (resp && resp.status === 200) {
+              setUserData(resp.data);
+            } else {
+              console.log("user datasi yoxdu bu guestin?", resp);
+            }
+          }
+        } catch (error) {
+          console.error("Data fetch sırasında hata:", error);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleCameraAccess = async () => {
     if (isActive) {
+      setShowYtInp(false);
+      setShowMap(false);
+      setPdfFileName("");
+      setSelectedImage("");
+
+      setPostImage("");
+      setUploadedFileUrl("");
+      setVideoSource(null);
+      setIsActive(false);
+      setCameraStream(null);
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
         setCameraStream(null);
       }
       setIsActive(false);
     } else {
+      setShowYtInp(false);
+      setShowMap(false);
+      setPdfFileName("");
+      setSelectedImage("");
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -49,6 +121,36 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
     }
   };
 
+  const handleCaptureImage = async () => {
+    if (!videoRef.current) return;
+
+    const canvas = document.createElement("canvas");
+    const video = videoRef.current;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          const file = new File([blob], "captured-image.jpg", {
+            type: "image/jpeg",
+          });
+
+          const uploadedUrl = await upload(file);
+          if (uploadedUrl) {
+            setIsActive(false);
+            setPostImage(uploadedUrl);
+            setSelectedImage(uploadedUrl);
+          }
+        }
+      }, "image/jpeg");
+    }
+  };
+
   useEffect(() => {
     if (cameraStream && videoRef.current) {
       videoRef.current.srcObject = cameraStream;
@@ -59,26 +161,66 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
   const videoInputRef = useRef<HTMLInputElement | null>(null);
   const pdfInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setVideoSource("");
+    setShowMap(false);
+    setPdfFileName("");
+    setShowYtInp(false);
+    setIsActive(false);
+
     const files = event.target.files;
     if (files && files.length > 0) {
-      const imageUrl = URL.createObjectURL(files[0]);
+      const file = files[0];
+      const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
+
+      // Upload the file
+      const uploadedUrl = await upload(file);
+      if (uploadedUrl) {
+        setPostImage(uploadedUrl);
+      }
     }
   };
 
-  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSelectedImage("");
+    setShowMap(false);
+    setPdfFileName("");
+    setIsActive(false);
+
     const files = event.target.files;
     if (files && files.length > 0) {
-      const videoUrl = URL.createObjectURL(files[0]);
-      setVideoSource(videoUrl);
+      const file = files[0];
+
+      const uploadedUrl = await upload(file);
+      if (uploadedUrl) {
+        setVideoSource(uploadedUrl);
+        setShowYtInp(false);
+      }
+    } else {
+      setVideoSource("");
     }
   };
 
-  const handlePdfChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSelectedImage("");
+    setVideoSource("");
+    setShowYtInp(false);
+    setShowMap(false);
+    setIsActive(false);
     const files = event.target.files;
     if (files && files.length > 0) {
-      setPdfFileName(files[0].name);
+      const uploadedUrl = await upload(files[0]);
+      if (uploadedUrl) {
+        setPdfFileName(files[0].name);
+        setUploadedFileUrl(uploadedUrl);
+      }
     }
   };
 
@@ -87,9 +229,15 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
       imageInputRef.current.click();
       setSelectedImage("");
     }
+    setIsActive(false);
   };
 
   const handleVideoClick = () => {
+    setSelectedImage("");
+    setPdfFileName("");
+    setVideoSource("");
+    setShowMap(false);
+    setIsActive(false);
     setShowYtInp(!showYtInp);
     if (videoInputRef.current) {
       videoInputRef.current.click();
@@ -97,43 +245,68 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
   };
 
   const handlePdfClick = () => {
+    setSelectedImage("");
     setPdfFileName("");
+    setVideoSource("");
+    setShowMap(false);
+    setShowYtInp(false);
+    setIsActive(false);
     if (pdfInputRef.current) {
       pdfInputRef.current.click();
     }
   };
 
-  const handleYoutubeUrlChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setYoutubeUrl(event.target.value);
-  };
-
   const handleLocationClick = () => {
+    setSelectedImage("");
+    setPdfFileName("");
+    setVideoSource("");
+    setShowYtInp(false);
+    setIsActive(false);
     setShowMap((prevState) => !prevState);
   };
 
   const handleSubmit = async () => {
     if (content.trim() === "") return;
 
-    // const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-    // const userId = userInfo.user_id;
+    const userId = localStorage.getItem("userId");
 
-    // const newDiscussion = {
-    //   topic: "Default Topic",
-    //   content: content,
-    //   tag: "Default Tag",
-    //   discussion_score: 0,
-    //   question: true,
-    //   answered: true,
-    //   user_id: userId,
-    // };
+    const newDiscussion = {
+      title: "Default Topic",
+      content: content ? content : "",
+      answered: true,
+      user_id: userId,
+      community_id: selectedCommunity,
+      file_url: newPostImage
+        ? newPostImage
+        : videoSource
+        ? videoSource
+        : uploadedFileUrl
+        ? uploadedFileUrl
+        : "",
+    };
 
-    // await dispatch(postDisData(newDiscussion));
+    try {
+      const response = await postDiscussions(newDiscussion);
+      if (response?.status === 200) {
+        setDiscussions((prev) => [...prev, response?.data]);
+      }
+    } catch (error) {
+      console.error("Error posting discussion:", error);
+    }
     setContent("");
+    setPostImage("");
+    setShowYtInp(false);
+    setShowMap(false);
+    setPdfFileName(null);
+    setUploadedFileUrl("");
+    setVideoSource(null);
+    setSelectedImage(null);
+    setIsActive(false);
+    setCameraStream(null);
   };
 
   const [discussions, setDiscussions] = useState<IDiscussion[]>([]);
+
   useEffect(() => {
     const fetchCommunityDiscussions = async () => {
       try {
@@ -142,6 +315,9 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
         );
         if (selectedCommunityDiscussions) {
           setDiscussions(selectedCommunityDiscussions);
+        }
+        else{
+          setDiscussions([])
         }
       } catch (error) {
         console.error("Topluluk tartışmaları alınırken hata oluştu:", error);
@@ -152,18 +328,28 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
   }, [selectedCommunity]);
 
   return (
-    <div className="middle md:w-4/5 flex flex-col gap-6 h-full pb-6 w-[95%] mx-auto pt-32">
+    <div className="middle md:w-4/5 flex flex-col gap-6 min-h-screen pb-6 w-[95%] mx-auto">
       <div
-        className={`card p-4 border rounded-2xl ${
-          theme === "white" ? "bg-white" : "bg-dark border-gray-600"
+        className={`card md:mt-40 mt-0 p-4 border rounded-2xl ${
+          theme === "white" ? "bg-white" : "bg-black border-gray-600"
         } ${theme === "white" ? "text-black" : "text-white"}`}
       >
-        <div className="up flex gap-2 items-center">
-          <div className="img w-12 h-10 rounded-lg bg-slate-400 cursor-pointer overflow-hidden">
+        <div className="up flex gap-2">
+          <div className="img rounded-lg h-[38px] mt-[1px] w-10 mini:block hidden bg-slate-400 cursor-pointer overflow-hidden">
             <img
-              src={"/images/hamida.jpg"}
+              src={
+                userRole === "Student" && userData?.profile_photo
+                  ? userData.profile_photo
+                  : userRole === "Company" && userData?.img_url
+                  ? userData.img_url
+                  : userRole === "Guest"
+                  ? "/images/guest.png"
+                  : userRole === "Student"
+                  ? "/images/student-no-image.webp"
+                  : "/images/Image-not-found.png"
+              }
               alt=""
-              className="object-cover w-full h-full"
+              className="object-cover h-full"
             />
           </div>
           <input
@@ -173,7 +359,7 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share or ask something to everyone!"
-            className={`border-2 p-2 ps-4 rounded-lg w-full ${
+            className={`border-2 pe-2 ps-4 py-[6px] rounded-lg w-full ${
               theme === "white"
                 ? "bg-whitesecond"
                 : "bg-secondblack border-gray-600"
@@ -181,7 +367,7 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
           />
           <button
             onClick={handleSubmit}
-            className={`border-2 p-[13px] rounded-lg ${
+            className={`border-2 p-[12px] rounded-lg ${
               theme === "white"
                 ? "bg-whitesecond hover:bg-gray-200"
                 : "bg-secondblack border-gray-600 text-white"
@@ -192,7 +378,7 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
         </div>
         <div className="icons pt-2 pb-2">
           <ul
-            className={`max-w-[90%] m-auto overflow-x-auto scrollbar-none flex gap-4 lg:gap-10 md:gap-6 sm:gap-3 p-3 pb-0 justify-start ${
+            className={`max-w-[90%] m-auto overflow-x-auto scrollbar-none flex gap-4 lg:gap-8 tb:gap-3 md:gap-5 p-3 pb-0 mini:justify-center justify-evenly ${
               theme === "white" ? "text-black" : "text-white"
             }`}
           >
@@ -200,49 +386,60 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleCameraAccess}
             >
-              <Camera /> Camera
+              <Camera />
+              <div className="mini:block hidden">Camera</div>
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleImageClick}
             >
-              <ImageIcon /> Image
+              <ImageIcon />
+              <div className="mini:block hidden">Photo</div>
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handleVideoClick}
             >
-              <VideoIcon /> Video
+              <VideoIcon />
+              <div className="mini:block hidden">Video</div>
             </li>
             <li
               className="flex items-center gap-2 cursor-pointer"
               onClick={handlePdfClick}
             >
-              <FolderIcon /> File
+              <FolderIcon />
+              <div className="mini:block hidden">File</div>
             </li>
-            <li
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={handleLocationClick}
-            >
-              <LocationIcon /> Location
-            </li>
+            <div className="xl:block lg:hidden mob:block hidden">
+              <li
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={handleLocationClick}
+              >
+                <LocationIcon /> Location
+              </li>
+            </div>
           </ul>
 
           {cameraStream && isActive && (
-            <div className="camera-preview rounded-2xl">
-              <video
-                ref={videoRef}
-                style={{
-                  width: "100%",
-                  margin: "auto",
-                  height: "400px",
-                  borderRadius: 20,
-                  marginTop: 10,
-                }}
-                autoPlay
-                playsInline
-                muted
-              />
+            <div className="w-full flex flex-col items-end">
+              <div className="camera-preview rounded-2xl overflow-hidden mt-3">
+                <video
+                  ref={videoRef}
+                  className="w-full rounded-sm object-cover"
+                  autoPlay
+                  playsInline
+                  muted
+                />
+              </div>
+
+              <button
+                onClick={handleCaptureImage}
+                className={`mt-4 border-2 p-2 rounded-lg right-0 flex items-center gap-1 ${
+                  theme === "white" ? "bg-gray-100" : "bg-gray-800 text-white"
+                }`}
+              >
+                take <Camera />
+              </button>
             </div>
           )}
 
@@ -261,7 +458,7 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
               <img
                 src={selectedImage}
                 alt="Selected"
-                className="object-cover h-[400px] w-full rounded-2xl cursor-pointer"
+                className="object-cover w-full rounded-2xl cursor-pointer"
               />
             </div>
           )}
@@ -275,40 +472,45 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
           />
           {videoSource && (
             <div className="video-preview mt-4">
-              <video controls className="w-[95%] mx-auto h-[400px] rounded-2xl">
+              <video
+                controls
+                className="w-[95%] mx-auto object-cover rounded-2xl"
+              >
                 <source src={videoSource} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
           )}
 
-          {showYtInp && (
-            <div className="youtube-url-input mt-4">
-              <input
-                type="text"
-                placeholder="Enter YouTube video URL"
-                value={youtubeUrl}
-                onChange={handleYoutubeUrlChange}
-                className={`border-2 p-2 ps-4 rounded-lg w-full ${
-                  theme === "white" ? "bg-[#f9f9f9]" : "bg-dark border-gray-600"
-                } ${theme === "white" ? "text-black" : "text-white"}`}
-              />
-              {youtubeUrl && (
-                <div className="youtube-video-preview mt-2">
-                  <iframe
-                    width="100%"
-                    height="300"
-                    src={`https://www.youtube.com/embed/${new URL(
-                      youtubeUrl
-                    ).searchParams.get("v")}`}
-                    title="YouTube video"
-                    frameBorder="0"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              )}
-            </div>
-          )}
+          {/* {showYtInp && (
+              <div className="youtube-url-input mt-4">
+                <input
+                  type="text"
+                  placeholder="Enter YouTube video URL"
+                  value={youtubeUrl}
+                  onChange={handleYoutubeUrlChange}
+                  className={`border-2 p-2 ps-4 rounded-lg w-full ${
+                    theme === "white"
+                      ? "bg-[#f9f9f9]"
+                      : "bg-dark border-gray-600"
+                  } ${theme === "white" ? "text-black" : "text-white"}`}
+                />
+                {youtubeUrl && (
+                  <div className="youtube-video-preview mt-2">
+                    <iframe
+                      width="100%"
+                      height="300"
+                      src={`https://www.youtube.com/embed/${new URL(
+                        youtubeUrl
+                      ).searchParams.get("v")}`}
+                      title="YouTube video"
+                      frameBorder="0"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                )}
+              </div>
+            )} */}
 
           <input
             ref={pdfInputRef}
@@ -339,22 +541,33 @@ const MiddSection = ({ theme, users, selectedCommunity }: IProps) => {
         </div>
       </div>
 
-      <div className="h-[77vh] overflow-y-auto scrollbar-none flex flex-col gap-6">
+      <div className="flex flex-col gap-6 md:mb-0 mb-14">
         {discussions &&
-          discussions.map((post, i: number) => {
-            const userContent = users.find((us) => us.user_id === post.user_id);
-
-            return (
-              <div key={i}>
-                <DiscussionPost
-                  post={post}
-                  userContent={userContent}
-                  theme={theme}
-                  users={users}
-                />
-              </div>
-            );
-          })}
+          discussions
+            .filter((post: IDiscussion) =>
+              post?.title?.toLowerCase().includes(searchedItem.toLowerCase())
+            )
+            .map((post: IDiscussion, i: number) => {
+              const userContent = profiles.find(
+                (us: IProfile) => us.user_id === post.user_id
+              );
+              const userContentGuest = users.find(
+                (us: IUser) => us.user_id === post.user_id
+              );
+              return (
+                <div key={i}>
+                  <DiscussionPost
+                    post={post}
+                    userContent={userContent}
+                    userContentGuest={userContentGuest}
+                    theme={theme}
+                    users={users}
+                    discussions={discussions}
+                    setDiscussions={setDiscussions}
+                  />
+                </div>
+              );
+            })}
       </div>
     </div>
   );

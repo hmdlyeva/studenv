@@ -23,6 +23,7 @@ const CompanyContainer = ({
         if (clickedCompany) {
           const resp = await getCompanyByIdInCompany(clickedCompany);
           if (resp && isMounted) {
+            console.log(resp)
             setCompanyDetails(resp.data);
           }
         }
@@ -34,6 +35,8 @@ const CompanyContainer = ({
         isMounted = false; // Bileşen unmount edildiğinde istek sonuçlarını işlemeyi durdurur.
       };
     }, [clickedCompany]);
+
+    console.log(clickedCompany)
 
   return (
     <main>

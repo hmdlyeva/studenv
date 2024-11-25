@@ -283,7 +283,7 @@ export const getDiscussions = async () => {
 export const postDiscussions = async (data:any) => {
   try {
     const res = await api.post(`discussions`, data);
-    return res.data;
+    return res;
   } catch (error: any) {
     return null;
   }
@@ -407,6 +407,15 @@ export const getResourceTags = async (id:string) => {
 
 // Profile
 
+export const getProfile = async () => {
+  try {
+    const res = await api.get(`profiles/`);
+    return res.data;
+  } catch (error: any) {
+    return null;
+  }
+};
+
 export const getProfileById = async (id:string) => {
   try {
     const res = await api.get(`profiles/${id}`);
@@ -445,6 +454,32 @@ export const getCommunitiesPopular = async () => {
   }
 };
 
+export const postUserToCommunity = async (data:any) => {
+  try {
+    const res = await api.post(`add-user-to-community`,data);
+    return res.data;
+  } catch (error: any) {
+    return null;
+  }
+};
+
+export const createCommunity = async (data:any) => {
+  try {
+    const res = await api.post(`create-community`,data);
+    return res.data;
+  } catch (error: any) {
+    return null;
+  }
+};
+
+export const leaveCommunity = async (data:any) => {
+  try {
+    const res = await api.delete(`remove-user-from-community`,data);
+    return res.data;
+  } catch (error: any) {
+    return null;
+  }
+};
 // tags
 
 export const getWeeklyPopularTags = async () => {
